@@ -5,4 +5,12 @@
     <string name="assignments">Assignments</string>
     <string name="tests">Tests</string>
     <string name="holidays">Holidays</string>
+    <string name="add_new_course">Add a new course</string>
+    <string name="fill_out_to_add_course">Fill out to add a new course</string>
+    <string name="course_name">Course Name</string>
+    <string name="course_code">Course Code</string>
+    <string name="add_label">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="credit_hours">Credit Hours</string>
+    <string name="lecturer">Lecturer</string>
 </resources>
