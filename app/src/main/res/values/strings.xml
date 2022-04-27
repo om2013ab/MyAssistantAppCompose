@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MyAssistantAppCompose</string>
+    <string name="courses">Courses</string>
+    <string name="timetable">Timetable</string>
+    <string name="assignments">Assignments</string>
+    <string name="tests">Tests</string>
+    <string name="holidays">Holidays</string>
 </resources>
