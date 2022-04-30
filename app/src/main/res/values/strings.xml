@@ -13,4 +13,8 @@
     <string name="cancel">Cancel</string>
     <string name="credit_hours">Credit Hours</string>
     <string name="lecturer">Lecturer</string>
+    <string name="more_option">More options</string>
+    <string name="delete_option">Delete</string>
+    <string name="edit_option">Edit</string>
+    <string name="undo">Undo</string>
 </resources>

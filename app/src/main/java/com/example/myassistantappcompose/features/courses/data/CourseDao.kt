@@ -15,5 +15,8 @@ interface CourseDao {
     @Insert(entity = CourseEntity::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCourse(courseEntity: CourseEntity)
 
+    @Query("DELETE FROM COURSES_TABLE WHERE id ==:id")
+    suspend fun deleteCourse(id: Int)
+
 
 }

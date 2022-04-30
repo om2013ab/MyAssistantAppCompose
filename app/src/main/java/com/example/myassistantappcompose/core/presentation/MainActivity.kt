@@ -4,10 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.myassistantappcompose.core.presentation.composable.BottomBarSection
@@ -55,7 +57,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 ) {
-                    DestinationsNavHost(navGraph = NavGraphs.root, navController = navController)
+                    DestinationsNavHost(navGraph = NavGraphs.root, navController = navController, modifier = Modifier.padding(it))
                 }
             }
         }

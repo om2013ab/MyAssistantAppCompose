@@ -1,6 +1,6 @@
 package com.example.myassistantappcompose.features.courses.presentation
 
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,8 +11,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.myassistantappcompose.core.data.AppDatabase
 import com.example.myassistantappcompose.features.courses.data.CourseEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class CourseViewModel @Inject constructor(
@@ -28,10 +31,10 @@ class CourseViewModel @Inject constructor(
         Color.Red,
         Color.Magenta,
         Color.Cyan,
-    )
+    ).map { it.toArgb() }
 
     fun onEvent(event: CourseEvent) {
-        when(event) {
+        when (event) {
             is CourseEvent.OnCourseNameChanged -> {
                 courseState = courseState.copy(courseName = event.name)
             }
@@ -48,12 +51,11 @@ class CourseViewModel @Inject constructor(
                 courseState = courseState.copy(courseLecturer = event.lecturer)
             }
 
-            CourseEvent.OnAddCourseClicked -> {
+            CourseEvent.OnShowDialog -> {
                 courseState = courseState.copy(showDialog = true)
 
             }
             CourseEvent.OnAddCourseConfirmed -> {
-                courseState = courseState.copy(showDialog = false)
                 viewModelScope.launch {
                     val newCourse = CourseEntity(
                         courseName = courseState.courseName,
@@ -61,15 +63,17 @@ class CourseViewModel @Inject constructor(
                         courseHours = courseState.courseHours.toInt(),
                         courseLecturer = courseState.courseLecturer,
                         id = 0,
-                        color = colors.random().toArgb()
+                        color = Random.nextInt(from = colors.first(), until = colors.last())
                     )
                     db.courseDao().insertCourse(newCourse)
                 }
-            }
-            CourseEvent.OnAddCourseDismissed -> {
-                courseState = courseState.copy(showDialog = false)
+                courseState = CourseState(showDialog = false)
 
             }
+            CourseEvent.OnDismissDialog -> {
+                courseState = CourseState(showDialog = false)
+            }
+            is CourseEvent.OnDeleteCourse -> TODO()
         }
     }
 }

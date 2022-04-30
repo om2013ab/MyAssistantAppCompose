@@ -1,6 +1,7 @@
 package com.example.myassistantappcompose.core.util
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
@@ -14,6 +15,7 @@ sealed class BottomNavDestinations(
     val unSelectedIcon: ImageVector,
     @StringRes val label: Int,
 ){
+    @ExperimentalFoundationApi
     object CoursesScreen: BottomNavDestinations(
         direction = CourseScreenDestination,
         selectedIcon = Icons.Filled.Book,
