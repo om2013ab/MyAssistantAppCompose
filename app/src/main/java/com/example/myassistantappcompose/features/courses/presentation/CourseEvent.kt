@@ -7,8 +7,9 @@ sealed class CourseEvent{
     data class OnCourseCodeChanged(val code: String): CourseEvent()
     data class OnCourseHoursChanged(val hours: String): CourseEvent()
     data class OnCourseLecturerChanged(val lecturer: String): CourseEvent()
-    data class OnDeleteCourse(val id: Int): CourseEvent()
-    object OnShowDialog: CourseEvent()
+    data class OnDeleteCourse(val courseEntity: CourseEntity): CourseEvent()
+    object OnUndoDeleteCourse: CourseEvent()
+    object OnShowAddCourseDialog: CourseEvent()
     object OnAddCourseConfirmed: CourseEvent()
-    object OnDismissDialog: CourseEvent()
+    object OnDismissAddCourseDialog: CourseEvent()
 }

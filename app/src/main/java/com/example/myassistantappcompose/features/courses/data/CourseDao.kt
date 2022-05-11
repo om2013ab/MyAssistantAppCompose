@@ -1,9 +1,6 @@
 package com.example.myassistantappcompose.features.courses.data
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,8 +12,8 @@ interface CourseDao {
     @Insert(entity = CourseEntity::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCourse(courseEntity: CourseEntity)
 
-    @Query("DELETE FROM COURSES_TABLE WHERE id ==:id")
-    suspend fun deleteCourse(id: Int)
+    @Delete
+    suspend fun deleteCourse(courseEntity: CourseEntity)
 
 
 }

@@ -1,12 +1,11 @@
 package com.example.myassistantappcompose.features.courses.presentation
 
-import android.util.Log
-import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -22,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,13 +31,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myassistantappcompose.R
+import com.example.myassistantappcompose.core.presentation.UiEvent
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
 import com.example.myassistantappcompose.features.courses.data.CourseEntity
 import com.example.myassistantappcompose.features.courses.presentation.components.StandardOutlinedTextField
 import com.ramcosta.composedestinations.annotation.Destination
-import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 @ExperimentalFoundationApi
 @Destination(start = true)
@@ -47,12 +44,13 @@ import kotlin.random.Random
 fun CourseScreen(
     viewModel: CourseViewModel = hiltViewModel()
 ) {
+    val scaffoldState = rememberScaffoldState()
     val courseState = viewModel.courseState
     val courses by viewModel.courses.collectAsState(emptyList())
     val fabHeight = 72.dp
     val fabHeightPx = with(
         LocalDensity.current
-    ) { fabHeight.roundToPx().toFloat()}
+    ) { fabHeight.roundToPx().toFloat() }
     val fabOffsetHeightPx = remember { mutableStateOf(0f) }
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
@@ -68,7 +66,24 @@ fun CourseScreen(
         }
     }
 
+    LaunchedEffect(key1 = true){
+        viewModel.uiEvent.collect{
+            when(it){
+                is UiEvent.ShowSnackBar -> {
+                    val result = scaffoldState.snackbarHostState.showSnackbar(
+                        message = it.message,
+                        actionLabel = it.actionLabel
+                    )
+                    if (result == SnackbarResult.ActionPerformed) {
+                        viewModel.onCourseEvent(CourseEvent.OnUndoDeleteCourse)
+                    }
+                }
+            }
+        }
+    }
+
     Scaffold(
+        scaffoldState = scaffoldState,
         modifier = Modifier.nestedScroll(nestedScrollConnection),
         topBar = { StandardTopBar(title = R.string.courses) },
         floatingActionButton = {
@@ -79,7 +94,7 @@ fun CourseScreen(
                         y = -fabOffsetHeightPx.value.roundToInt()
                     )
                 },
-                onClick = { viewModel.onEvent(CourseEvent.OnShowDialog) }
+                onClick = { viewModel.onCourseEvent(CourseEvent.OnShowAddCourseDialog) }
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -91,24 +106,33 @@ fun CourseScreen(
         LazyColumn(
             contentPadding = PaddingValues(16.dp)
         ) {
-            items(courses.size) { index ->
-                CourseItem(currentCourse = courses[index])
+            items(courses) { currentCourse ->
+                CourseItem(
+                    viewModel = viewModel,
+                    currentCourse = currentCourse
+                )
             }
         }
-        if (courseState.showDialog) {
-            AddCourseDialog(
-                viewModel = viewModel,
-                title = R.string.fill_out_to_add_course,
-                onConfirmedClick = {
-                    viewModel.onEvent(CourseEvent.OnAddCourseConfirmed)
-                }
-            )
-        }
+
     }
+    if (courseState.showAddCourseDialog) {
+        AddCourseDialog(
+            viewModel = viewModel,
+            title = R.string.fill_out_to_add_course,
+            onConfirmedClick = {
+                viewModel.onCourseEvent(CourseEvent.OnAddCourseConfirmed)
+            }
+        )
+    }
+
 }
 
+
 @Composable
-fun CourseItem(currentCourse: CourseEntity) {
+fun CourseItem(
+    viewModel: CourseViewModel,
+    currentCourse: CourseEntity
+) {
     Card(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
@@ -147,7 +171,7 @@ fun CourseItem(currentCourse: CourseEntity) {
                         )
                     }
                     IconButton(
-                        onClick = {}
+                        onClick = { viewModel.onCourseEvent(CourseEvent.OnDeleteCourse(currentCourse))}
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
@@ -177,12 +201,12 @@ fun CourseItem(currentCourse: CourseEntity) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = " Lecturer name: ${currentCourse.courseLecturer}",
+                    text = "Lecturer name: ${currentCourse.courseLecturer}",
                     fontSize = 12.sp,
                     color = Color.Black
                 )
                 Text(
-                    text = " Credit hours: ${currentCourse.courseHours}",
+                    text = "Credit hours: ${currentCourse.courseHours}",
                     fontSize = 12.sp,
                     color = Color.Black
                 )
@@ -201,7 +225,7 @@ fun AddCourseDialog(
     val courseState = viewModel.courseState
     AlertDialog(
         modifier = Modifier.clip(RoundedCornerShape(20.dp)),
-        onDismissRequest = { viewModel.onEvent(CourseEvent.OnDismissDialog) },
+        onDismissRequest = { viewModel.onCourseEvent(CourseEvent.OnDismissAddCourseDialog) },
         text = {
             Column {
                 Text(
@@ -214,21 +238,21 @@ fun AddCourseDialog(
                     value = courseState.courseName,
                     label = R.string.course_name,
                     onValueChanged = {
-                        viewModel.onEvent(CourseEvent.OnCourseNameChanged(it))
+                        viewModel.onCourseEvent(CourseEvent.OnCourseNameChanged(it))
                     }
                 )
                 StandardOutlinedTextField(
                     value = courseState.courseCode,
                     label = R.string.course_code,
                     onValueChanged = {
-                        viewModel.onEvent(CourseEvent.OnCourseCodeChanged(it))
+                        viewModel.onCourseEvent(CourseEvent.OnCourseCodeChanged(it))
                     }
                 )
                 StandardOutlinedTextField(
                     value = courseState.courseHours,
                     label = R.string.credit_hours,
                     onValueChanged = {
-                        viewModel.onEvent(CourseEvent.OnCourseHoursChanged(it))
+                        viewModel.onCourseEvent(CourseEvent.OnCourseHoursChanged(it))
                     },
                     keyboardType = KeyboardType.Number
                 )
@@ -236,7 +260,7 @@ fun AddCourseDialog(
                     value = courseState.courseLecturer,
                     label = R.string.lecturer,
                     onValueChanged = {
-                        viewModel.onEvent(CourseEvent.OnCourseLecturerChanged(it))
+                        viewModel.onCourseEvent(CourseEvent.OnCourseLecturerChanged(it))
                     }
                 )
             }
@@ -254,7 +278,7 @@ fun AddCourseDialog(
                     Text(stringResource(id = R.string.add_label))
                 }
                 TextButton(
-                    onClick = { viewModel.onEvent(CourseEvent.OnDismissDialog) },
+                    onClick = { viewModel.onCourseEvent(CourseEvent.OnDismissAddCourseDialog) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(stringResource(id = R.string.cancel))

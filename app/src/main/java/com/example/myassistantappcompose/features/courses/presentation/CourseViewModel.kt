@@ -1,6 +1,5 @@
 package com.example.myassistantappcompose.features.courses.presentation
 
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,6 +8,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myassistantappcompose.core.data.AppDatabase
+import com.example.myassistantappcompose.core.presentation.UiEvent
 import com.example.myassistantappcompose.features.courses.data.CourseEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -22,8 +22,11 @@ class CourseViewModel @Inject constructor(
     private val db: AppDatabase
 ):ViewModel() {
 
+    private val dao = db.courseDao()
     var courseState by mutableStateOf(CourseState())
-    val courses = db.courseDao().getAllCourses()
+    val courses = dao.getAllCourses()
+
+    private var deletedCourse: CourseEntity? = null
 
     private val colors = listOf(
         Color.Blue,
@@ -33,29 +36,32 @@ class CourseViewModel @Inject constructor(
         Color.Cyan,
     ).map { it.toArgb() }
 
-    fun onEvent(event: CourseEvent) {
-        when (event) {
+    private val uiEventChannel = Channel<UiEvent>()
+    val uiEvent = uiEventChannel.receiveAsFlow()
+
+    fun onCourseEvent(courseEvent: CourseEvent) {
+        when (courseEvent) {
             is CourseEvent.OnCourseNameChanged -> {
-                courseState = courseState.copy(courseName = event.name)
+                courseState = courseState.copy(courseName = courseEvent.name)
             }
 
             is CourseEvent.OnCourseCodeChanged -> {
-                courseState = courseState.copy(courseCode = event.code)
+                courseState = courseState.copy(courseCode = courseEvent.code)
             }
 
             is CourseEvent.OnCourseHoursChanged -> {
-                courseState = courseState.copy(courseHours = event.hours)
+                courseState = courseState.copy(courseHours = courseEvent.hours)
             }
 
             is CourseEvent.OnCourseLecturerChanged -> {
-                courseState = courseState.copy(courseLecturer = event.lecturer)
+                courseState = courseState.copy(courseLecturer = courseEvent.lecturer)
             }
 
-            CourseEvent.OnShowDialog -> {
-                courseState = courseState.copy(showDialog = true)
+            is CourseEvent.OnShowAddCourseDialog -> {
+                courseState = courseState.copy(showAddCourseDialog = true)
 
             }
-            CourseEvent.OnAddCourseConfirmed -> {
+            is CourseEvent.OnAddCourseConfirmed -> {
                 viewModelScope.launch {
                     val newCourse = CourseEntity(
                         courseName = courseState.courseName,
@@ -65,15 +71,32 @@ class CourseViewModel @Inject constructor(
                         id = 0,
                         color = Random.nextInt(from = colors.first(), until = colors.last())
                     )
-                    db.courseDao().insertCourse(newCourse)
+                    dao.insertCourse(newCourse)
                 }
-                courseState = CourseState(showDialog = false)
+                courseState = CourseState(showAddCourseDialog = false)
 
             }
-            CourseEvent.OnDismissDialog -> {
-                courseState = CourseState(showDialog = false)
+            is CourseEvent.OnDismissAddCourseDialog -> {
+                courseState = CourseState(showAddCourseDialog = false)
             }
-            is CourseEvent.OnDeleteCourse -> TODO()
+            is CourseEvent.OnDeleteCourse -> {
+                deletedCourse = courseEvent.courseEntity
+                viewModelScope.launch {
+                    dao.deleteCourse(courseEvent.courseEntity)
+                    uiEventChannel.send(UiEvent.ShowSnackBar(
+                        message = "Course deleted",
+                        actionLabel = "UNDO"
+                    ))
+
+                }
+            }
+            is CourseEvent.OnUndoDeleteCourse -> {
+                viewModelScope.launch {
+                    deletedCourse?.let {
+                        dao.insertCourse(it)
+                    }
+                }
+            }
         }
     }
 }
