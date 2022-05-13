@@ -2,6 +2,7 @@ package com.example.myassistantappcompose.features.courses.presentation.componen
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.OutlinedTextField
@@ -17,6 +18,7 @@ import com.example.myassistantappcompose.features.courses.presentation.CourseEve
 
 @Composable
 fun StandardOutlinedTextField(
+    modifier: Modifier = Modifier,
     value: String,
     @StringRes label: Int,
     onValueChanged: (String) -> Unit,
@@ -26,6 +28,7 @@ fun StandardOutlinedTextField(
 
 ) {
     OutlinedTextField(
+        modifier = modifier.fillMaxWidth(),
         value = value,
         onValueChange = { onValueChanged(it) },
         label = { Text(stringResource(label)) },

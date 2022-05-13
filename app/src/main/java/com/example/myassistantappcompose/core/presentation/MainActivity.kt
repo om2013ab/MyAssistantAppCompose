@@ -37,24 +37,27 @@ class MainActivity : ComponentActivity() {
                 }
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val hideBottomNav = navBackStackEntry?.arguments?.getBoolean(ARG_BOTTOM_NAV_VISIBILITY)
                 Scaffold(
                     backgroundColor = MaterialTheme.colors.background,
                     bottomBar = {
-                        BottomBarSection(
-                            destinations = listOf(
-                                BottomNavDestinations.CoursesScreen,
-                                BottomNavDestinations.TimetableScreen,
-                                BottomNavDestinations.AssignmentsScreen,
-                                BottomNavDestinations.TestsScreen,
-                                BottomNavDestinations.HolidaysScreen
-                            ),
-                            currentDestination = navBackStackEntry?.navDestination,
-                            onBottomBarItemClick = {
-                                navController.navigateTo(it){
-                                    launchSingleTop = true
+                        if (hideBottomNav == null || !hideBottomNav) {
+                            BottomBarSection(
+                                destinations = listOf(
+                                    BottomNavDestinations.CoursesScreen,
+                                    BottomNavDestinations.TimetableScreen,
+                                    BottomNavDestinations.AssignmentsScreen,
+                                    BottomNavDestinations.TestsScreen,
+                                    BottomNavDestinations.HolidaysScreen
+                                ),
+                                currentDestination = navBackStackEntry?.navDestination,
+                                onBottomBarItemClick = {
+                                    navController.navigateTo(it){
+                                        launchSingleTop = true
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 ) {
                     DestinationsNavHost(navGraph = NavGraphs.root, navController = navController, modifier = Modifier.padding(it))
@@ -63,3 +66,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+private const val ARG_BOTTOM_NAV_VISIBILITY = "hideBottomNav"

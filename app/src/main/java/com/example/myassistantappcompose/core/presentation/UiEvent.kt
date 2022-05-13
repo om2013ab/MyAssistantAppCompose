@@ -5,4 +5,5 @@ sealed class UiEvent {
         val message: String,
         val actionLabel: String? = null
     ): UiEvent()
+    object PopBackStack: UiEvent()
 }

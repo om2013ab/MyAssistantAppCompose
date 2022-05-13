@@ -19,11 +19,13 @@ import kotlin.random.Random
 
 @HiltViewModel
 class CourseViewModel @Inject constructor(
-    private val db: AppDatabase
+    db: AppDatabase
 ):ViewModel() {
 
     private val dao = db.courseDao()
     var courseState by mutableStateOf(CourseState())
+        private set
+
     val courses = dao.getAllCourses()
 
     private var deletedCourse: CourseEntity? = null
@@ -41,19 +43,19 @@ class CourseViewModel @Inject constructor(
 
     fun onCourseEvent(courseEvent: CourseEvent) {
         when (courseEvent) {
-            is CourseEvent.OnCourseNameChanged -> {
+            is CourseEvent.OnCourseNameChange -> {
                 courseState = courseState.copy(courseName = courseEvent.name)
             }
 
-            is CourseEvent.OnCourseCodeChanged -> {
+            is CourseEvent.OnCourseCodeChange -> {
                 courseState = courseState.copy(courseCode = courseEvent.code)
             }
 
-            is CourseEvent.OnCourseHoursChanged -> {
+            is CourseEvent.OnCourseHoursChange -> {
                 courseState = courseState.copy(courseHours = courseEvent.hours)
             }
 
-            is CourseEvent.OnCourseLecturerChanged -> {
+            is CourseEvent.OnCourseLecturerChange -> {
                 courseState = courseState.copy(courseLecturer = courseEvent.lecturer)
             }
 

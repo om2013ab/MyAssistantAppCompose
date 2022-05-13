@@ -35,14 +35,17 @@ import com.example.myassistantappcompose.core.presentation.UiEvent
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
 import com.example.myassistantappcompose.features.courses.data.CourseEntity
 import com.example.myassistantappcompose.features.courses.presentation.components.StandardOutlinedTextField
+import com.example.myassistantappcompose.features.destinations.CourseEditScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlin.math.roundToInt
 
 @ExperimentalFoundationApi
 @Destination(start = true)
 @Composable
 fun CourseScreen(
-    viewModel: CourseViewModel = hiltViewModel()
+    viewModel: CourseViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator
 ) {
     val scaffoldState = rememberScaffoldState()
     val courseState = viewModel.courseState
@@ -109,7 +112,8 @@ fun CourseScreen(
             items(courses) { currentCourse ->
                 CourseItem(
                     viewModel = viewModel,
-                    currentCourse = currentCourse
+                    currentCourse = currentCourse,
+                    navigator = navigator
                 )
             }
         }
@@ -131,7 +135,8 @@ fun CourseScreen(
 @Composable
 fun CourseItem(
     viewModel: CourseViewModel,
-    currentCourse: CourseEntity
+    currentCourse: CourseEntity,
+    navigator: DestinationsNavigator
 ) {
     Card(
         modifier = Modifier
@@ -162,7 +167,7 @@ fun CourseItem(
                 )
                 Row {
                     IconButton(
-                        onClick = {}
+                        onClick = {navigator.navigate(CourseEditScreenDestination(currentCourse.id))}
                     ) {
                         Icon(
                             imageVector = Icons.Default.Edit,
@@ -238,21 +243,21 @@ fun AddCourseDialog(
                     value = courseState.courseName,
                     label = R.string.course_name,
                     onValueChanged = {
-                        viewModel.onCourseEvent(CourseEvent.OnCourseNameChanged(it))
+                        viewModel.onCourseEvent(CourseEvent.OnCourseNameChange(it))
                     }
                 )
                 StandardOutlinedTextField(
                     value = courseState.courseCode,
                     label = R.string.course_code,
                     onValueChanged = {
-                        viewModel.onCourseEvent(CourseEvent.OnCourseCodeChanged(it))
+                        viewModel.onCourseEvent(CourseEvent.OnCourseCodeChange(it))
                     }
                 )
                 StandardOutlinedTextField(
                     value = courseState.courseHours,
                     label = R.string.credit_hours,
                     onValueChanged = {
-                        viewModel.onCourseEvent(CourseEvent.OnCourseHoursChanged(it))
+                        viewModel.onCourseEvent(CourseEvent.OnCourseHoursChange(it))
                     },
                     keyboardType = KeyboardType.Number
                 )
@@ -260,7 +265,7 @@ fun AddCourseDialog(
                     value = courseState.courseLecturer,
                     label = R.string.lecturer,
                     onValueChanged = {
-                        viewModel.onCourseEvent(CourseEvent.OnCourseLecturerChanged(it))
+                        viewModel.onCourseEvent(CourseEvent.OnCourseLecturerChange(it))
                     }
                 )
             }

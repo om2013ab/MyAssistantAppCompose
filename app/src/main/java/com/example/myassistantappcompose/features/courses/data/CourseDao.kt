@@ -9,6 +9,9 @@ interface CourseDao {
     @Query("SELECT * FROM courses_table")
     fun getAllCourses(): Flow<List<CourseEntity>>
 
+    @Query("SELECT * FROM courses_table WHERE id =:courseId")
+    suspend fun getCourseById(courseId: Int): CourseEntity
+
     @Insert(entity = CourseEntity::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCourse(courseEntity: CourseEntity)
 
