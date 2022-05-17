@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myassistantappcompose.core.data.AppDatabase
 import com.example.myassistantappcompose.core.presentation.UiEvent
+import com.example.myassistantappcompose.features.courses.data.CourseDao
 import com.example.myassistantappcompose.features.courses.data.CourseEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -19,10 +20,9 @@ import kotlin.random.Random
 
 @HiltViewModel
 class CourseViewModel @Inject constructor(
-    db: AppDatabase
+    private val dao: CourseDao
 ):ViewModel() {
 
-    private val dao = db.courseDao()
     var courseState by mutableStateOf(CourseState())
         private set
 

@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.SideEffect
@@ -23,6 +24,7 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.navigateTo
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -52,8 +54,10 @@ class MainActivity : ComponentActivity() {
                                 ),
                                 currentDestination = navBackStackEntry?.navDestination,
                                 onBottomBarItemClick = {
+                                    navController.popBackStack()
                                     navController.navigateTo(it){
                                         launchSingleTop = true
+                                        restoreState = true
                                     }
                                 }
                             )

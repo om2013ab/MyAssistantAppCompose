@@ -2,6 +2,7 @@ package com.example.myassistantappcompose.core.util
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
@@ -22,6 +23,7 @@ sealed class BottomNavDestinations(
         unSelectedIcon = Icons.Outlined.Book,
         label = R.string.courses,
     )
+    @ExperimentalMaterialApi
     object TimetableScreen: BottomNavDestinations(
         direction = TimetableScreenDestination,
         selectedIcon = Icons.Filled.InsertInvitation,

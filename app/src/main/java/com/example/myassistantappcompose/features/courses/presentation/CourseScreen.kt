@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myassistantappcompose.R
 import com.example.myassistantappcompose.core.presentation.UiEvent
+import com.example.myassistantappcompose.core.presentation.composable.StandardFab
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
 import com.example.myassistantappcompose.features.courses.data.CourseEntity
 import com.example.myassistantappcompose.features.courses.presentation.components.StandardOutlinedTextField
@@ -81,6 +82,7 @@ fun CourseScreen(
                         viewModel.onCourseEvent(CourseEvent.OnUndoDeleteCourse)
                     }
                 }
+                else -> Unit
             }
         }
     }
@@ -90,24 +92,20 @@ fun CourseScreen(
         modifier = Modifier.nestedScroll(nestedScrollConnection),
         topBar = { StandardTopBar(title = R.string.courses) },
         floatingActionButton = {
-            FloatingActionButton(
+            StandardFab(
                 modifier = Modifier.offset {
                     IntOffset(
                         x = 0,
                         y = -fabOffsetHeightPx.value.roundToInt()
                     )
                 },
+                contentDesc = R.string.add_new_course,
                 onClick = { viewModel.onCourseEvent(CourseEvent.OnShowAddCourseDialog) }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(id = R.string.add_new_course)
-                )
-            }
+            )
         }
     ) {
         LazyColumn(
-            contentPadding = PaddingValues(16.dp)
+            contentPadding = PaddingValues(16.dp),
         ) {
             items(courses) { currentCourse ->
                 CourseItem(
@@ -139,10 +137,9 @@ fun CourseItem(
     navigator: DestinationsNavigator
 ) {
     Card(
-        modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
-            .padding(bottom = 24.dp),
-        elevation = 10.dp
+        modifier = Modifier.padding(bottom = 16.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = 8.dp
     ) {
 
         Column(
