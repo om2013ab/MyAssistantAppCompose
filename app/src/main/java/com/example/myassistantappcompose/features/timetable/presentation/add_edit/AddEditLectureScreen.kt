@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myassistantappcompose.R
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
-import com.example.myassistantappcompose.features.courses.presentation.components.StandardOutlinedTextField
+import com.example.myassistantappcompose.core.presentation.composable.StandardOutlinedTextField
 import com.example.myassistantappcompose.features.timetable.data.TimetableEntity
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator

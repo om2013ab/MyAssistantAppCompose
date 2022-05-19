@@ -17,7 +17,7 @@ import com.example.myassistantappcompose.R
 import com.example.myassistantappcompose.core.presentation.UiEvent
 import com.example.myassistantappcompose.core.presentation.composable.StandardFab
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
-import com.example.myassistantappcompose.features.courses.presentation.components.StandardOutlinedTextField
+import com.example.myassistantappcompose.core.presentation.composable.StandardOutlinedTextField
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 

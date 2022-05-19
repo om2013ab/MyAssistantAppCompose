@@ -1,4 +1,4 @@
-package com.example.myassistantappcompose.features.courses.presentation.components
+package com.example.myassistantappcompose.core.presentation.composable
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Spacer
