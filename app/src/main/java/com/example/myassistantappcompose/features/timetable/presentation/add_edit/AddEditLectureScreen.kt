@@ -41,9 +41,7 @@ fun AddEditLectureScreen(
         it.courseCode
     }
     val addLectureState = viewModelEdit.addEditLectureState
-    var expanded by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
-    dayIndex?.let { viewModelEdit.onSelectedDayChanged(it.toInt()) }
 
 
     Scaffold(
@@ -63,9 +61,7 @@ fun AddEditLectureScreen(
             CourseCodeExposedDropdownMenu(
                 courseCodes = codes,
                 selectedCode = addLectureState.selectedCode,
-                expanded = expanded,
-                selectedCodeChange = { viewModelEdit.onCourseCodeChanged(it) },
-                expandedChange = { expanded = it }
+                selectedCodeChange = { viewModelEdit.onAddEditEvent(AddEditEvent.OnCourseCodeChanged(it)) },
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(text = stringResource(id = R.string.time), fontWeight = FontWeight.Bold)
@@ -88,7 +84,7 @@ fun AddEditLectureScreen(
                         selectedTime = addLectureState.selectedTimeFrom,
                         initHour = System.currentTimeMillis().hours.toInt(DurationUnit.HOURS),
                         initMinute = System.currentTimeMillis().minutes.toInt(DurationUnit.MINUTES),
-                        timeChange = { viewModelEdit.onTimeFromChanged(it) }
+                        timeChange = { viewModelEdit.onAddEditEvent(AddEditEvent.OnTimeFromChanged(it)) }
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     TimePicker(
@@ -96,7 +92,7 @@ fun AddEditLectureScreen(
                         selectedTime = addLectureState.selectedTimeTo,
                         initHour = System.currentTimeMillis().hours.toInt(DurationUnit.HOURS),
                         initMinute = System.currentTimeMillis().minutes.toInt(DurationUnit.MINUTES),
-                        timeChange = { viewModelEdit.onTimeToChanged(it) }
+                        timeChange = { viewModelEdit.onAddEditEvent(AddEditEvent.OnTimeToChanged(it)) }
                     )
                 }
             }
@@ -104,7 +100,7 @@ fun AddEditLectureScreen(
             StandardOutlinedTextField(
                 value = addLectureState.enteredVenue,
                 label = R.string.venue,
-                onValueChanged = { viewModelEdit.onVenueChanged(it) },
+                onValueChanged = { viewModelEdit.onAddEditEvent(AddEditEvent.OnVenueChanged(it)) },
                 spacer = 60.dp
             )
             val enableButton =
@@ -112,7 +108,7 @@ fun AddEditLectureScreen(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    viewModelEdit.onAddLecture()
+                    viewModelEdit.onAddEditEvent(AddEditEvent.OnAddSchedule)
                     navigator.popBackStack()
                 },
                 enabled = enableButton
@@ -135,13 +131,13 @@ fun AddEditLectureScreen(
 private fun CourseCodeExposedDropdownMenu(
     courseCodes: List<String>,
     selectedCode: String,
-    expanded: Boolean,
     selectedCodeChange: (String) -> Unit,
-    expandedChange: (Boolean) -> Unit
 ) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expandedChange(!expanded) }
+        onExpandedChange = { expanded = !expanded }
     ) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -158,7 +154,7 @@ private fun CourseCodeExposedDropdownMenu(
         )
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expandedChange(false) }
+            onDismissRequest = { expanded = false }
         ) {
             if (courseCodes.isNullOrEmpty()){
                 DropdownMenuItem(onClick = { /*TODO*/ }) {
@@ -168,7 +164,7 @@ private fun CourseCodeExposedDropdownMenu(
             courseCodes.forEach {
                 DropdownMenuItem(
                     onClick = {
-                        expandedChange(false)
+                        expanded = false
                         selectedCodeChange(it)
                     }
                 ) {
