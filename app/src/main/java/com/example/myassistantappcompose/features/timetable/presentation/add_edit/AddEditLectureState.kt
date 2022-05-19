@@ -1,9 +1,9 @@
-package com.example.myassistantappcompose.features.timetable.presentation.add
+package com.example.myassistantappcompose.features.timetable.presentation.add_edit
 
-data class AddLectureState(
+data class AddEditLectureState(
     val selectedCode: String = "Choose course code",
     val selectedTimeFrom: String = "Click to pick time",
     val selectedTimeTo: String = "Click to pick time",
-    val enteredVenue: String = "Unknown venue",
+    val enteredVenue: String = "",
     val selectedDay: Int = 0
 )

@@ -1,19 +1,22 @@
 package com.example.myassistantappcompose.features.timetable.data
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TimetableDao {
 
     @Query("SELECT * FROM timetable_table")
-    fun getAllSchedulesByDayIndex(): Flow<List<TimetableEntity>>
+    fun getAllSchedules(): Flow<List<TimetableEntity>>
+
+    @Query("SELECT * FROM timetable_table WHERE id = :id")
+    suspend fun getScheduleById(id: Int): TimetableEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTimetable(timetableEntity: TimetableEntity)
+    suspend fun insertSchedule(timetableEntity: TimetableEntity)
+
+    @Delete
+    suspend fun deleteSchedule(timetableEntity: TimetableEntity)
 
 
 }

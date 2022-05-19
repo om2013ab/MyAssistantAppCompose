@@ -1,4 +1,4 @@
-package com.example.myassistantappcompose.features.timetable.presentation.add
+package com.example.myassistantappcompose.features.timetable.presentation.add_edit
 
 import android.app.TimePickerDialog
 import android.content.Context
@@ -19,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myassistantappcompose.R
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
 import com.example.myassistantappcompose.features.courses.presentation.components.StandardOutlinedTextField
+import com.example.myassistantappcompose.features.timetable.data.TimetableEntity
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlin.time.Duration.Companion.hours
@@ -28,21 +29,22 @@ import kotlin.time.DurationUnit
 @ExperimentalMaterialApi
 @Destination
 @Composable
-fun AddLectureScreen(
+fun AddEditLectureScreen(
     navigator: DestinationsNavigator,
-    viewModel: AddLectureViewModel = hiltViewModel(),
-    dayIndex: Int,
+    viewModelEdit: AddEditLectureViewModel = hiltViewModel(),
+    dayIndex: String?,
+    timetableEntity: TimetableEntity?,
     hideBottomNav: Boolean = true
 ) {
 
-    val codes = viewModel.courses.collectAsState(emptyList()).value.map {
+    val codes = viewModelEdit.courses.collectAsState(emptyList()).value.map {
         it.courseCode
     }
-    val addLectureState = viewModel.addLectureState
+    val addLectureState = viewModelEdit.addEditLectureState
     var expanded by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
+    dayIndex?.let { viewModelEdit.onSelectedDayChanged(it.toInt()) }
 
-    viewModel.onSelectedDayChanged(dayIndex)
 
     Scaffold(
         topBar = {
@@ -62,7 +64,7 @@ fun AddLectureScreen(
                 courseCodes = codes,
                 selectedCode = addLectureState.selectedCode,
                 expanded = expanded,
-                selectedCodeChange = { viewModel.onCourseCodeChanged(it) },
+                selectedCodeChange = { viewModelEdit.onCourseCodeChanged(it) },
                 expandedChange = { expanded = it }
             )
             Spacer(modifier = Modifier.height(24.dp))
@@ -86,7 +88,7 @@ fun AddLectureScreen(
                         selectedTime = addLectureState.selectedTimeFrom,
                         initHour = System.currentTimeMillis().hours.toInt(DurationUnit.HOURS),
                         initMinute = System.currentTimeMillis().minutes.toInt(DurationUnit.MINUTES),
-                        timeChange = { viewModel.onTimeFromChanged(it) }
+                        timeChange = { viewModelEdit.onTimeFromChanged(it) }
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     TimePicker(
@@ -94,7 +96,7 @@ fun AddLectureScreen(
                         selectedTime = addLectureState.selectedTimeTo,
                         initHour = System.currentTimeMillis().hours.toInt(DurationUnit.HOURS),
                         initMinute = System.currentTimeMillis().minutes.toInt(DurationUnit.MINUTES),
-                        timeChange = { viewModel.onTimeToChanged(it) }
+                        timeChange = { viewModelEdit.onTimeToChanged(it) }
                     )
                 }
             }
@@ -102,7 +104,7 @@ fun AddLectureScreen(
             StandardOutlinedTextField(
                 value = addLectureState.enteredVenue,
                 label = R.string.venue,
-                onValueChanged = { viewModel.onVenueChanged(it) },
+                onValueChanged = { viewModelEdit.onVenueChanged(it) },
                 spacer = 60.dp
             )
             val enableButton =
@@ -110,12 +112,12 @@ fun AddLectureScreen(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    viewModel.onAddLecture()
+                    viewModelEdit.onAddLecture()
                     navigator.popBackStack()
                 },
                 enabled = enableButton
             ) {
-                Text(text = stringResource(id = R.string.add))
+                Text(text = stringResource(if(timetableEntity != null) R.string.save else R.string.add))
             }
             TextButton(
                 modifier = Modifier.fillMaxWidth(),
@@ -158,6 +160,11 @@ private fun CourseCodeExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expandedChange(false) }
         ) {
+            if (courseCodes.isNullOrEmpty()){
+                DropdownMenuItem(onClick = { /*TODO*/ }) {
+                    Text(text = stringResource(R.string.empty_codes))
+                }
+            }
             courseCodes.forEach {
                 DropdownMenuItem(
                     onClick = {
