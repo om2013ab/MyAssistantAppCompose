@@ -1,7 +1,10 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.example.myassistantappcompose.features.courses.presentation
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,10 +13,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -22,13 +27,16 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myassistantappcompose.R
 import com.example.myassistantappcompose.core.presentation.UiEvent
@@ -70,9 +78,9 @@ fun CourseScreen(
         }
     }
 
-    LaunchedEffect(key1 = true){
-        viewModel.uiEvent.collect{
-            when(it){
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect {
+            when (it) {
                 is UiEvent.ShowSnackBar -> {
                     val result = scaffoldState.snackbarHostState.showSnackbar(
                         message = it.message,
@@ -104,6 +112,20 @@ fun CourseScreen(
             )
         }
     ) {
+        if (courses.isEmpty()) {
+            EmptyCourses()
+        }
+
+        if (courseState.showAddCourseDialog) {
+            AddCourseDialog(
+                viewModel = viewModel,
+                title = R.string.fill_out_to_add_course,
+                onConfirmedClick = {
+                    viewModel.onCourseEvent(CourseEvent.OnAddCourseConfirmed)
+                }
+            )
+        }
+
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
         ) {
@@ -115,18 +137,7 @@ fun CourseScreen(
                 )
             }
         }
-
     }
-    if (courseState.showAddCourseDialog) {
-        AddCourseDialog(
-            viewModel = viewModel,
-            title = R.string.fill_out_to_add_course,
-            onConfirmedClick = {
-                viewModel.onCourseEvent(CourseEvent.OnAddCourseConfirmed)
-            }
-        )
-    }
-
 }
 
 
@@ -164,7 +175,7 @@ fun CourseItem(
                 )
                 Row {
                     IconButton(
-                        onClick = {navigator.navigate(CourseEditScreenDestination(currentCourse.id))}
+                        onClick = { navigator.navigate(CourseEditScreenDestination(currentCourse.id)) }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Edit,
@@ -173,7 +184,7 @@ fun CourseItem(
                         )
                     }
                     IconButton(
-                        onClick = { viewModel.onCourseEvent(CourseEvent.OnDeleteCourse(currentCourse))}
+                        onClick = { viewModel.onCourseEvent(CourseEvent.OnDeleteCourse(currentCourse)) }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
@@ -226,13 +237,14 @@ fun AddCourseDialog(
 ) {
     val courseState = viewModel.courseState
     AlertDialog(
-        modifier = Modifier.clip(RoundedCornerShape(20.dp)),
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+        modifier = Modifier.fillMaxSize(),
         onDismissRequest = { viewModel.onCourseEvent(CourseEvent.OnDismissAddCourseDialog) },
         text = {
             Column {
                 Text(
-                    text = stringResource(id = title),
                     modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(id = title),
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -263,7 +275,8 @@ fun AddCourseDialog(
                     label = R.string.lecturer,
                     onValueChanged = {
                         viewModel.onCourseEvent(CourseEvent.OnCourseLecturerChange(it))
-                    }
+                    },
+                    spacer = 50.dp
                 )
             }
         },
@@ -282,10 +295,35 @@ fun AddCourseDialog(
                 TextButton(
                     onClick = { viewModel.onCourseEvent(CourseEvent.OnDismissAddCourseDialog) },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(stringResource(id = R.string.cancel))
-                }
+                ) { Text(stringResource(R.string.cancel))}
             }
         }
     )
+}
+
+@Composable
+fun EmptyCourses() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier.size(120.dp),
+            painter = painterResource(R.drawable.empty),
+            contentDescription = stringResource(R.string.no_courses),
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(id = R.string.no_courses),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(id = R.string.no_courses_msg),
+            textAlign = TextAlign.Center
+        )
+    }
 }

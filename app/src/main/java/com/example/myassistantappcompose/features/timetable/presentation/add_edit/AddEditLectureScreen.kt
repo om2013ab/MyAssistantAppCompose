@@ -157,7 +157,7 @@ private fun CourseCodeExposedDropdownMenu(
             onDismissRequest = { expanded = false }
         ) {
             if (courseCodes.isNullOrEmpty()){
-                DropdownMenuItem(onClick = { /*TODO*/ }) {
+                DropdownMenuItem(onClick = {expanded = false }) {
                     Text(text = stringResource(R.string.empty_codes))
                 }
             }
@@ -167,9 +167,7 @@ private fun CourseCodeExposedDropdownMenu(
                         expanded = false
                         selectedCodeChange(it)
                     }
-                ) {
-                    Text(text = it)
-                }
+                ) { Text(text = it)}
             }
         }
 

@@ -32,4 +32,7 @@
     <string name="clear_text">Clear text</string>
     <string name="empty_codes">Empty courses. You need first to add courses in the courses page</string>
     <string name="unknown_venue">Unknown venue</string>
+    <string name="no_courses">No Courses</string>
+    <string name="no_courses_msg">To add a course, click on + and fill out the course information</string>
+    <string name="close_dialog">Close dialog</string>
 </resources>
