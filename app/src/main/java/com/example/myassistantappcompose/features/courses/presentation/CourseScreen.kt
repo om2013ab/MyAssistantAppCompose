@@ -1,47 +1,32 @@
 package com.example.myassistantappcompose.features.courses.presentation
 
-import androidx.annotation.StringRes
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myassistantappcompose.R
 import com.example.myassistantappcompose.core.presentation.UiEvent
+import com.example.myassistantappcompose.core.presentation.composable.StandardAlertDialog
 import com.example.myassistantappcompose.core.presentation.composable.StandardFab
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
-import com.example.myassistantappcompose.features.courses.data.CourseEntity
-import com.example.myassistantappcompose.core.presentation.composable.StandardOutlinedTextField
 import com.example.myassistantappcompose.features.courses.presentation.components.AddCourseDialog
 import com.example.myassistantappcompose.features.courses.presentation.components.CourseItem
 import com.example.myassistantappcompose.features.courses.presentation.components.EmptyCourses
-import com.example.myassistantappcompose.features.destinations.CourseEditScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlin.math.roundToInt
@@ -53,6 +38,8 @@ fun CourseScreen(
     viewModel: CourseViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 ) {
+    var menuExpanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
     val courseState = viewModel.courseState
     val courses by viewModel.courses.collectAsState(emptyList())
@@ -95,7 +82,37 @@ fun CourseScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = Modifier.nestedScroll(nestedScrollConnection),
-        topBar = { StandardTopBar(title = R.string.courses) },
+        topBar = {
+            StandardTopBar(
+                title = R.string.courses,
+                showMenuActionIcon = true,
+                onMenuIconClick = { menuExpanded = true },
+                dropdownMenu = {
+                    MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(8.dp))) {
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                onClick = {
+                                    menuExpanded = false
+                                    if (courses.isEmpty()) {
+                                        Toast.makeText(
+                                            context,
+                                            R.string.no_courses_delete,
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    } else {
+                                        viewModel.onCourseEvent(CourseEvent.OnShowDeleteCoursesDialog)
+                                    }
+                                }
+                            ) { Text(stringResource(R.string.delete_all)) }
+
+                        }
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             StandardFab(
                 modifier = Modifier.offset {
@@ -110,19 +127,24 @@ fun CourseScreen(
         }
     ) {
         if (courses.isEmpty()) {
-            EmptyCourses()
+            EmptyCourses(imageSize = 120.dp)
         }
 
         if (courseState.showAddCourseDialog) {
             AddCourseDialog(
-                viewModel = viewModel,
                 title = R.string.fill_out_to_add_course,
-                onConfirmedClick = {
-                    viewModel.onCourseEvent(CourseEvent.OnAddCourseConfirmed)
-                }
+                onEvent = viewModel::onCourseEvent,
+                courseState = courseState
             )
         }
-
+        if (courseState.showDeleteAllDialog) {
+            StandardAlertDialog(
+                title = R.string.confirm_deletion,
+                text = R.string.delete_all_text,
+                onConfirm = { viewModel.onCourseEvent(CourseEvent.OnDeleteCoursesConfirmed) },
+                onDismiss = { viewModel.onCourseEvent(CourseEvent.OnDismissDeleteCourses) }
+            )
+        }
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
         ) {

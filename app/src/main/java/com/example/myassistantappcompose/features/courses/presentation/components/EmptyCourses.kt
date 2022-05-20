@@ -11,19 +11,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myassistantappcompose.R
 
 @Composable
-fun EmptyCourses() {
+fun EmptyCourses(
+    imageSize: Dp
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            modifier = Modifier.size(120.dp).alpha(0.70f),
+            modifier = Modifier.size(imageSize).alpha(0.70f),
             painter = painterResource(R.drawable.empty),
             contentDescription = stringResource(R.string.no_courses),
         )

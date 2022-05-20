@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myassistantappcompose.core.data.AppDatabase
 import com.example.myassistantappcompose.core.presentation.UiEvent
 import com.example.myassistantappcompose.features.courses.data.CourseDao
 import com.example.myassistantappcompose.features.courses.data.CourseEntity
@@ -78,7 +77,7 @@ class CourseViewModel @Inject constructor(
                 courseState = CourseState(showAddCourseDialog = false)
 
             }
-            is CourseEvent.OnDismissAddCourseDialog -> {
+            is CourseEvent.OnDismissAddCourse -> {
                 courseState = CourseState(showAddCourseDialog = false)
             }
             is CourseEvent.OnDeleteCourse -> {
@@ -98,6 +97,16 @@ class CourseViewModel @Inject constructor(
                         dao.insertCourse(it)
                     }
                 }
+            }
+            is CourseEvent.OnShowDeleteCoursesDialog -> {
+                courseState = CourseState(showDeleteAllDialog = true)
+            }
+            is CourseEvent.OnDismissDeleteCourses -> {
+                courseState = CourseState(showDeleteAllDialog = false)
+            }
+            is CourseEvent.OnDeleteCoursesConfirmed -> viewModelScope.launch{
+                courseState = CourseState(showDeleteAllDialog = false)
+                dao.deleteAllCourses()
             }
         }
     }

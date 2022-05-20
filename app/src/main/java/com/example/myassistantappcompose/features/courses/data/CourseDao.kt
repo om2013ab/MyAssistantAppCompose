@@ -18,5 +18,7 @@ interface CourseDao {
     @Delete
     suspend fun deleteCourse(courseEntity: CourseEntity)
 
+    @Query("DELETE FROM courses_table")
+    suspend fun deleteAllCourses()
 
 }

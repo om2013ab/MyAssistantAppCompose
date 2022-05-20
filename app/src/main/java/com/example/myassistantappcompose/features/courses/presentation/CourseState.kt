@@ -6,5 +6,6 @@ data class CourseState(
     val courseHours: String = "",
     val courseLecturer: String = "",
     val showAddCourseDialog: Boolean = false,
-    val showAlertDialog: Boolean = false
+    val showDeleteAllDialog: Boolean = false,
+
 )

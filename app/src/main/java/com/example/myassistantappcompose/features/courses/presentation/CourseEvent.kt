@@ -11,5 +11,9 @@ sealed class CourseEvent{
     object OnUndoDeleteCourse: CourseEvent()
     object OnShowAddCourseDialog: CourseEvent()
     object OnAddCourseConfirmed: CourseEvent()
-    object OnDismissAddCourseDialog: CourseEvent()
+    object OnDismissAddCourse: CourseEvent()
+    object OnShowDeleteCoursesDialog: CourseEvent()
+    object OnDeleteCoursesConfirmed: CourseEvent()
+    object OnDismissDeleteCourses: CourseEvent()
+
 }

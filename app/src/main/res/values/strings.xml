@@ -20,7 +20,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="confirm_deletion">Confirm deletion</string>
-    <string name="confirm_text">Are sure you want to delete this course ?</string>
+    <string name="delete_all_text">Are sure you want to delete all courses ?</string>
     <string name="edit_course">Edit course info</string>
     <string name="save">Save</string>
     <string name="add_new_lecture">Add a new lecture</string>
@@ -35,4 +35,8 @@
     <string name="no_courses">No Courses</string>
     <string name="no_courses_msg">To add a course, click on + and fill out the course information</string>
     <string name="close_dialog">Close dialog</string>
+    <string name="delete_all">Delete all</string>
+    <string name="confirm">Confirm</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="no_courses_delete">There is no course to delete</string>
 </resources>
