@@ -1,5 +1,6 @@
 package com.example.myassistantappcompose.features.courses.presentation
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
@@ -62,7 +63,7 @@ fun CourseScreen(
         }
     }
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = scaffoldState) {
         viewModel.uiEvent.collect {
             when (it) {
                 is UiEvent.ShowSnackBar -> {
@@ -81,7 +82,6 @@ fun CourseScreen(
 
     Scaffold(
         scaffoldState = scaffoldState,
-        modifier = Modifier.nestedScroll(nestedScrollConnection),
         topBar = {
             StandardTopBar(
                 title = R.string.courses,
@@ -147,6 +147,7 @@ fun CourseScreen(
         }
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
+            modifier = Modifier.nestedScroll(nestedScrollConnection)
         ) {
             items(courses) { currentCourse ->
                 CourseItem(
@@ -158,7 +159,6 @@ fun CourseScreen(
         }
     }
 }
-
 
 
 

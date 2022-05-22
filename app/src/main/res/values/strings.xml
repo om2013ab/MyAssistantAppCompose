@@ -39,4 +39,7 @@
     <string name="confirm">Confirm</string>
     <string name="dismiss">Dismiss</string>
     <string name="no_courses_delete">There is no course to delete</string>
+    <string name="add_new_assignment">Add new assignment</string>
+    <string name="deadline">Deadline</string>
+    <string name="description">Short description</string>
 </resources>

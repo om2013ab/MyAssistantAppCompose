@@ -3,6 +3,7 @@ package com.example.myassistantappcompose.di
 import android.content.Context
 import androidx.room.Room
 import com.example.myassistantappcompose.core.data.AppDatabase
+import com.example.myassistantappcompose.features.assignments.data.AssignmentDao
 import com.example.myassistantappcompose.features.courses.data.CourseDao
 import com.example.myassistantappcompose.features.timetable.data.TimetableDao
 import dagger.Module
@@ -38,5 +39,11 @@ object DatabaseModule {
     @Singleton
     fun provideTimetableDao(db: AppDatabase): TimetableDao {
         return db.timetableDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAssignmentDao(db: AppDatabase): AssignmentDao {
+        return db.assignmentDao()
     }
 }

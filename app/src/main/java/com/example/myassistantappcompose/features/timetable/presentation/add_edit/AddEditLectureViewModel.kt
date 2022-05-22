@@ -26,7 +26,7 @@ class AddEditLectureViewModel @Inject constructor(
 
     private var schedule by mutableStateOf<TimetableEntity?>(null)
 
-    var addEditLectureState by mutableStateOf(AddEditLectureState())
+    var addEditState by mutableStateOf(AddEditLectureState())
         private set
 
     init {
@@ -35,7 +35,7 @@ class AddEditLectureViewModel @Inject constructor(
             if (id != null) {
                 schedule = timetableDao.getScheduleById(id)
                 schedule?.let {
-                    addEditLectureState = addEditLectureState.copy(
+                    addEditState = addEditState.copy(
                         selectedCode = it.selectedCode,
                         selectedTimeFrom = it.timeFrom,
                         selectedTimeTo = it.timeTo,
@@ -47,36 +47,36 @@ class AddEditLectureViewModel @Inject constructor(
         }
     }
 
-    fun onAddEditEvent(event: AddEditEvent) {
-        when(event) {
-            is AddEditEvent.OnCourseCodeChanged -> {
-                addEditLectureState = addEditLectureState.copy(
-                    selectedCode = event.code
+    fun onAddEditEvent(scheduleEvent: AddEditScheduleEvent) {
+        when(scheduleEvent) {
+            is AddEditScheduleEvent.OnCourseCodeChanged -> {
+                addEditState = addEditState.copy(
+                    selectedCode = scheduleEvent.code
                 )
             }
 
-            is AddEditEvent.OnTimeFromChanged ->{
-                addEditLectureState = addEditLectureState.copy(
-                    selectedTimeFrom = event.from
+            is AddEditScheduleEvent.OnTimeFromChanged ->{
+                addEditState = addEditState.copy(
+                    selectedTimeFrom = scheduleEvent.from
                 )
             }
-            is AddEditEvent.OnTimeToChanged -> {
-                addEditLectureState = addEditLectureState.copy(
-                    selectedTimeTo = event.to
+            is AddEditScheduleEvent.OnTimeToChanged -> {
+                addEditState = addEditState.copy(
+                    selectedTimeTo = scheduleEvent.to
                 )
             }
-            is AddEditEvent.OnVenueChanged -> {
-                addEditLectureState = addEditLectureState.copy(
-                    enteredVenue = event.venue
+            is AddEditScheduleEvent.OnVenueChanged -> {
+                addEditState = addEditState.copy(
+                    enteredVenue = scheduleEvent.venue
                 )
             }
-            AddEditEvent.OnAddSchedule -> viewModelScope.launch{
+            AddEditScheduleEvent.OnAddSchedule -> viewModelScope.launch{
                 val newSchedule = TimetableEntity(
-                    selectedCode = addEditLectureState.selectedCode,
-                    timeFrom = addEditLectureState.selectedTimeFrom,
-                    timeTo = addEditLectureState.selectedTimeTo,
-                    venue = addEditLectureState.enteredVenue,
-                    dayIndex = dayIndex?.toInt() ?: addEditLectureState.selectedDay,
+                    selectedCode = addEditState.selectedCode!!,
+                    timeFrom = addEditState.selectedTimeFrom!!,
+                    timeTo = addEditState.selectedTimeTo!!,
+                    venue = addEditState.enteredVenue,
+                    dayIndex = dayIndex?.toInt() ?: addEditState.selectedDay,
                     id = schedule?.id ?: 0
                 )
                 timetableDao.insertSchedule(newSchedule)

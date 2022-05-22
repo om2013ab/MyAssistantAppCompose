@@ -8,7 +8,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -17,11 +16,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myassistantappcompose.R
+import com.example.myassistantappcompose.core.presentation.composable.CourseCodeExposedDropdownMenu
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
 import com.example.myassistantappcompose.core.presentation.composable.StandardOutlinedTextField
 import com.example.myassistantappcompose.features.timetable.data.TimetableEntity
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import java.util.*
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
@@ -31,18 +32,18 @@ import kotlin.time.DurationUnit
 @Composable
 fun AddEditLectureScreen(
     navigator: DestinationsNavigator,
-    viewModelEdit: AddEditLectureViewModel = hiltViewModel(),
+    viewModel: AddEditLectureViewModel = hiltViewModel(),
     dayIndex: String?,
     timetableEntity: TimetableEntity?,
     hideBottomNav: Boolean = true
 ) {
 
-    val codes = viewModelEdit.courses.collectAsState(emptyList()).value.map {
+    val codes = viewModel.courses.collectAsState(emptyList()).value.map {
         it.courseCode
     }
-    val addLectureState = viewModelEdit.addEditLectureState
+    val addEditState = viewModel.addEditState
     val context = LocalContext.current
-
+    val enableButton = addEditState.selectedCode != null && addEditState.selectedTimeFrom != null && addEditState.selectedTimeTo != null
 
     Scaffold(
         topBar = {
@@ -60,8 +61,14 @@ fun AddEditLectureScreen(
         ) {
             CourseCodeExposedDropdownMenu(
                 courseCodes = codes,
-                selectedCode = addLectureState.selectedCode,
-                selectedCodeChange = { viewModelEdit.onAddEditEvent(AddEditEvent.OnCourseCodeChanged(it)) },
+                selectedCode = addEditState.selectedCode,
+                selectedCodeChange = {
+                    viewModel.onAddEditEvent(
+                        AddEditScheduleEvent.OnCourseCodeChanged(
+                            it
+                        )
+                    )
+                },
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(text = stringResource(id = R.string.time), fontWeight = FontWeight.Bold)
@@ -81,39 +88,45 @@ fun AddEditLectureScreen(
                 Column() {
                     TimePicker(
                         context = context,
-                        selectedTime = addLectureState.selectedTimeFrom,
-                        initHour = System.currentTimeMillis().hours.toInt(DurationUnit.HOURS),
-                        initMinute = System.currentTimeMillis().minutes.toInt(DurationUnit.MINUTES),
-                        timeChange = { viewModelEdit.onAddEditEvent(AddEditEvent.OnTimeFromChanged(it)) }
+                        selectedTime = addEditState.selectedTimeFrom,
+                        timeChange = {
+                            viewModel.onAddEditEvent(
+                                AddEditScheduleEvent.OnTimeFromChanged(
+                                    it
+                                )
+                            )
+                        }
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     TimePicker(
                         context = context,
-                        selectedTime = addLectureState.selectedTimeTo,
-                        initHour = System.currentTimeMillis().hours.toInt(DurationUnit.HOURS),
-                        initMinute = System.currentTimeMillis().minutes.toInt(DurationUnit.MINUTES),
-                        timeChange = { viewModelEdit.onAddEditEvent(AddEditEvent.OnTimeToChanged(it)) }
+                        selectedTime = addEditState.selectedTimeTo,
+                        timeChange = {
+                            viewModel.onAddEditEvent(
+                                AddEditScheduleEvent.OnTimeToChanged(
+                                    it
+                                )
+                            )
+                        }
                     )
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))
             StandardOutlinedTextField(
-                value = addLectureState.enteredVenue,
+                value = addEditState.enteredVenue,
                 label = R.string.venue,
-                onValueChanged = { viewModelEdit.onAddEditEvent(AddEditEvent.OnVenueChanged(it)) },
-                spacer = 60.dp
+                onValueChanged = { viewModel.onAddEditEvent(AddEditScheduleEvent.OnVenueChanged(it)) },
             )
-            val enableButton =
-                codes.contains(addLectureState.selectedCode) && addLectureState.selectedTimeFrom.any { it.isDigit() } && addLectureState.selectedTimeTo.any { it.isDigit() }
+            Spacer(modifier = Modifier.height(60.dp))
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    viewModelEdit.onAddEditEvent(AddEditEvent.OnAddSchedule)
+                    viewModel.onAddEditEvent(AddEditScheduleEvent.OnAddSchedule)
                     navigator.popBackStack()
                 },
                 enabled = enableButton
             ) {
-                Text(text = stringResource(if(timetableEntity != null) R.string.save else R.string.add))
+                Text(text = stringResource(if (timetableEntity != null) R.string.save else R.string.add))
             }
             TextButton(
                 modifier = Modifier.fillMaxWidth(),
@@ -128,82 +141,31 @@ fun AddEditLectureScreen(
 
 @ExperimentalMaterialApi
 @Composable
-private fun CourseCodeExposedDropdownMenu(
-    courseCodes: List<String>,
-    selectedCode: String,
-    selectedCodeChange: (String) -> Unit,
-) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
-    ) {
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            readOnly = true,
-            value = selectedCode,
-            onValueChange = {},
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(
-                    expanded = expanded
-                )
-            },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
-            label = { Text(text = "Course Code", fontWeight = FontWeight.Bold) }
-        )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            if (courseCodes.isNullOrEmpty()){
-                DropdownMenuItem(onClick = {expanded = false }) {
-                    Text(text = stringResource(R.string.empty_codes))
-                }
-            }
-            courseCodes.forEach {
-                DropdownMenuItem(
-                    onClick = {
-                        expanded = false
-                        selectedCodeChange(it)
-                    }
-                ) { Text(text = it)}
-            }
-        }
-
-    }
-}
-
-
-@ExperimentalMaterialApi
-@Composable
 private fun TimePicker(
     context: Context,
-    initHour: Int,
-    initMinute: Int,
-    selectedTime: String,
-    timeChange: (String) -> Unit
+    selectedTime: String?,
+    timeChange: (String?) -> Unit
 ) {
+    val calendar = Calendar.getInstance()
+    val curHour = calendar.get(Calendar.HOUR)
+    val curMinute = calendar.get(Calendar.MINUTE)
 
-    val timePickerDialog by remember {
-        mutableStateOf(
-            TimePickerDialog(
-                context,
-                { _, hour: Int, minute: Int ->
-                    timeChange("$hour:$minute")
-                }, initHour, initMinute, false
-            )
-        )
-    }
+    val timePickerDialog = TimePickerDialog(
+        context,
+        { _, hour: Int, minute: Int ->
+            timeChange("$hour:$minute")
+        }, curHour, curMinute, false
+    )
+
     OutlinedButton(
         modifier = Modifier.fillMaxWidth(),
         onClick = { timePickerDialog.show() },
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            Text(text = selectedTime, modifier = Modifier.align(Alignment.Center))
-            if (selectedTime.any { it.isDigit() }) {
+            Text(text = selectedTime ?:"Click to pick time" , modifier = Modifier.align(Alignment.Center))
+            if (selectedTime != null) {
                 IconButton(
-                    onClick = { timeChange("Click to pick time") },
+                    onClick = { timeChange(null) },
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .size(15.dp)
