@@ -2,6 +2,7 @@ package com.example.myassistantappcompose.core.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.myassistantappcompose.features.assignments.data.AssignmentDao
 import com.example.myassistantappcompose.features.assignments.data.AssignmentEntity
 import com.example.myassistantappcompose.features.courses.data.CourseDao
@@ -9,6 +10,7 @@ import com.example.myassistantappcompose.features.courses.data.CourseEntity
 import com.example.myassistantappcompose.features.timetable.data.TimetableDao
 import com.example.myassistantappcompose.features.timetable.data.TimetableEntity
 
+@TypeConverters(TypeConverter::class)
 @Database(
     entities = [CourseEntity::class, TimetableEntity::class, AssignmentEntity::class],
     exportSchema = false, version = 1)

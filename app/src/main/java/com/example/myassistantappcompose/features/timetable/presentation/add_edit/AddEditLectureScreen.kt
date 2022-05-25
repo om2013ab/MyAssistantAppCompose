@@ -19,9 +19,12 @@ import com.example.myassistantappcompose.R
 import com.example.myassistantappcompose.core.presentation.composable.CourseCodeExposedDropdownMenu
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
 import com.example.myassistantappcompose.core.presentation.composable.StandardOutlinedTextField
+import com.example.myassistantappcompose.core.util.Constants.TIME_PATTERN
 import com.example.myassistantappcompose.features.timetable.data.TimetableEntity
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -143,8 +146,8 @@ fun AddEditLectureScreen(
 @Composable
 private fun TimePicker(
     context: Context,
-    selectedTime: String?,
-    timeChange: (String?) -> Unit
+    selectedTime: Date?,
+    timeChange: (Date?) -> Unit
 ) {
     val calendar = Calendar.getInstance()
     val curHour = calendar.get(Calendar.HOUR)
@@ -153,7 +156,11 @@ private fun TimePicker(
     val timePickerDialog = TimePickerDialog(
         context,
         { _, hour: Int, minute: Int ->
-            timeChange("$hour:$minute")
+            val time = calendar.apply {
+                set(Calendar.HOUR_OF_DAY,hour)
+                set(Calendar.MINUTE,minute)
+            }
+            timeChange(time.time)
         }, curHour, curMinute, false
     )
 
@@ -162,7 +169,8 @@ private fun TimePicker(
         onClick = { timePickerDialog.show() },
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            Text(text = selectedTime ?:"Click to pick time" , modifier = Modifier.align(Alignment.Center))
+            val formattedTime = selectedTime?.let { SimpleDateFormat(TIME_PATTERN, Locale.ROOT).format(it) }
+            Text(text = formattedTime ?:"Click to pick time" , modifier = Modifier.align(Alignment.Center))
             if (selectedTime != null) {
                 IconButton(
                     onClick = { timeChange(null) },

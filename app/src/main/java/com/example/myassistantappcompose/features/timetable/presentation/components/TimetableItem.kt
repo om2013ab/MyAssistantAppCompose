@@ -15,7 +15,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myassistantappcompose.R
+import com.example.myassistantappcompose.core.util.Constants.TIME_PATTERN
 import com.example.myassistantappcompose.features.timetable.data.TimetableEntity
+import java.text.SimpleDateFormat
+import java.util.*
 
 @ExperimentalMaterialApi
 @Composable
@@ -24,6 +27,7 @@ fun TimetableItem(
     onOptionClick: (index: Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val formatter = SimpleDateFormat(TIME_PATTERN, Locale.ROOT)
     Card(
         modifier = Modifier
             .padding(bottom = 16.dp)
@@ -39,7 +43,7 @@ fun TimetableItem(
                 Text(
                     modifier = Modifier
                         .align(Alignment.Center),
-                    text = "${schedule.timeFrom}  -  ${schedule.timeTo}",
+                    text = "${formatter.format(schedule.timeFrom)}  -  ${formatter.format(schedule.timeTo)}",
                     fontSize = 16.sp
                 )
                 IconButton(

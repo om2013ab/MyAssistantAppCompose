@@ -19,8 +19,10 @@ import com.example.myassistantappcompose.R
 import com.example.myassistantappcompose.core.presentation.composable.CourseCodeExposedDropdownMenu
 import com.example.myassistantappcompose.core.presentation.composable.StandardOutlinedTextField
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
+import com.example.myassistantappcompose.core.util.Constants.DATE_PATTERN
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import java.text.SimpleDateFormat
 import java.util.*
 
 @ExperimentalMaterialApi
@@ -69,7 +71,7 @@ fun AddEditAssignmentScreen(
             Spacer(modifier = Modifier.height(8.dp))
             DatePicker(
                 context = context,
-                date = addEditState.selectedDeadline,
+                selectedDate = addEditState.selectedDeadline,
                 dateChange = {
                     viewModel.onAddEditEvent(AddEditAssignmentEvent.OnDeadlineChange(it))
                 }
@@ -104,29 +106,39 @@ fun AddEditAssignmentScreen(
 @Composable
 fun DatePicker(
     context: Context,
-    date: String?,
-    dateChange: (String?) -> Unit
+    selectedDate: Date?,
+    dateChange: (Date?) -> Unit
 ) {
     val calender = Calendar.getInstance()
     val curYear = calender.get(Calendar.YEAR)
     val curMonth = calender.get(Calendar.MONTH)
     val curDay = calender.get(Calendar.DAY_OF_MONTH)
 
-    val datePickerDialog =
-        DatePickerDialog(
+    val datePickerDialog = DatePickerDialog(
             context,
-            { _, year: Int, month: Int, day: Int ->
-                dateChange("$day/${month+1}/$year")
-            }, curYear, curMonth, curDay
+            {_, year: Int, month: Int, day: Int ->
+                val date = calender.apply {
+                    set(Calendar.YEAR,year)
+                    set(Calendar.MONTH,month)
+                    set(Calendar.DAY_OF_MONTH,day)
+                }
+                dateChange(date.time)
 
+            }, curYear, curMonth, curDay
         )
+    datePickerDialog.datePicker.minDate = calender.timeInMillis
     OutlinedButton(
         modifier = Modifier.fillMaxWidth(),
         onClick = { datePickerDialog.show() },
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            Text(text = date ?: "Click to pick time", modifier = Modifier.align(Alignment.Center))
-            if (date != null) {
+            val formattedDate = selectedDate?.let {
+                SimpleDateFormat(DATE_PATTERN, Locale.ROOT).format(
+                    it
+                )
+            }
+            Text(text = formattedDate ?: "Click to pick time", modifier = Modifier.align(Alignment.Center))
+            if (selectedDate != null) {
                 IconButton(
                     onClick = { dateChange(null)},
                     modifier = Modifier
