@@ -20,6 +20,7 @@ import com.example.myassistantappcompose.core.presentation.composable.CourseCode
 import com.example.myassistantappcompose.core.presentation.composable.StandardOutlinedTextField
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
 import com.example.myassistantappcompose.core.util.Constants.DATE_PATTERN
+import com.example.myassistantappcompose.features.assignments.data.AssignmentEntity
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import java.text.SimpleDateFormat
@@ -30,7 +31,9 @@ import java.util.*
 @Composable
 fun AddEditAssignmentScreen(
     navigator: DestinationsNavigator,
-    viewModel: AddEditAssignmentViewModel = hiltViewModel()
+    viewModel: AddEditAssignmentViewModel = hiltViewModel(),
+    hideBottomNav: Boolean = true,
+    assignmentEntity: AssignmentEntity?
 ) {
 
     val codes = viewModel.courses.collectAsState(emptyList()).value.map {
@@ -76,7 +79,7 @@ fun AddEditAssignmentScreen(
                     viewModel.onAddEditEvent(AddEditAssignmentEvent.OnDeadlineChange(it))
                 }
             )
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             StandardOutlinedTextField(
                 value = addEditState.enteredDescription,
                 label = R.string.description,
@@ -91,13 +94,13 @@ fun AddEditAssignmentScreen(
                 },
                 enabled = enableButton
             ) {
-                Text(text = stringResource(R.string.add))
+                Text(stringResource(if (assignmentEntity != null) R.string.save else R.string.add))
             }
             TextButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { navigator.popBackStack() }
             ) {
-                Text(text = stringResource(R.string.cancel))
+                Text(stringResource(if (assignmentEntity != null) R.string.back else R.string.cancel))
             }
         }
     }
@@ -126,16 +129,18 @@ fun DatePicker(
 
             }, curYear, curMonth, curDay
         )
-    datePickerDialog.datePicker.minDate = calender.timeInMillis
+
     OutlinedButton(
         modifier = Modifier.fillMaxWidth(),
-        onClick = { datePickerDialog.show() },
+        onClick = {
+            datePickerDialog.apply {
+                datePicker.minDate = calender.timeInMillis //disable dates before today
+                show()
+            }},
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             val formattedDate = selectedDate?.let {
-                SimpleDateFormat(DATE_PATTERN, Locale.ROOT).format(
-                    it
-                )
+                SimpleDateFormat(DATE_PATTERN, Locale.ROOT).format(it)
             }
             Text(text = formattedDate ?: "Click to pick time", modifier = Modifier.align(Alignment.Center))
             if (selectedDate != null) {

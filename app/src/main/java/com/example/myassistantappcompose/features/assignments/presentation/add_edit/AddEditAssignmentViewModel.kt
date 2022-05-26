@@ -3,6 +3,7 @@ package com.example.myassistantappcompose.features.assignments.presentation.add_
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myassistantappcompose.features.assignments.data.AssignmentDao
@@ -15,13 +16,32 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditAssignmentViewModel @Inject constructor(
     private val assignmentDao: AssignmentDao,
-    private val courseDao: CourseDao
-): ViewModel() {
+    private val courseDao: CourseDao,
+    savedStateHandle: SavedStateHandle,
+    ): ViewModel() {
 
     val courses = courseDao.getAllCourses()
+    val assignments = assignmentDao.getAllAssignments()
 
     var addEditState by mutableStateOf(AddEditAssignmentState())
         private set
+    private var assingment by mutableStateOf<AssignmentEntity?>(null)
+
+    init {
+        val assignmentEntity = savedStateHandle.get<AssignmentEntity>("assignmentEntity")
+        if (assignmentEntity != null) {
+            viewModelScope.launch {
+                assingment = assignmentDao.getAssignmentById(assignmentEntity.id)
+                assingment?.let {
+                    addEditState = addEditState.copy(
+                        selectedCode = it.courseCode,
+                        selectedDeadline = it.deadline,
+                        enteredDescription = it.description
+                    )
+                }
+            }
+        }
+    }
 
     fun onAddEditEvent(event: AddEditAssignmentEvent ) {
         when(event) {
@@ -44,7 +64,8 @@ class AddEditAssignmentViewModel @Inject constructor(
                 val newAssignment = AssignmentEntity(
                     courseCode = addEditState.selectedCode!!,
                     deadline = addEditState.selectedDeadline!!,
-                    description = addEditState.enteredDescription
+                    description = addEditState.enteredDescription,
+                    id = assingment?.id ?: 0
                 )
                 assignmentDao.insertAssignment(newAssignment)
             }

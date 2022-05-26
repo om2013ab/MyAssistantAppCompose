@@ -12,6 +12,9 @@ interface AssignmentDao {
     @Query("SELECT * FROM assignment_table")
     fun getAllAssignments(): Flow<List<AssignmentEntity>>
 
+    @Query("SELECT * FROM assignment_table WHERE id =:assignmentId")
+    suspend fun getAssignmentById(assignmentId: Int): AssignmentEntity
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAssignment(assignmentEntity: AssignmentEntity)
 }

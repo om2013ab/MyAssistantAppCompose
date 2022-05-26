@@ -42,4 +42,5 @@
     <string name="add_new_assignment">Add new assignment</string>
     <string name="deadline">Deadline</string>
     <string name="description">Short description</string>
+    <string name="back">Back</string>
 </resources>
