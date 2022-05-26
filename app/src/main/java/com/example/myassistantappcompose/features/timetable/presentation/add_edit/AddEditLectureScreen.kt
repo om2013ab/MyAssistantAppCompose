@@ -51,7 +51,7 @@ fun AddEditLectureScreen(
     Scaffold(
         topBar = {
             StandardTopBar(
-                title = R.string.add_new_lecture,
+                title = stringResource(R.string.add_new_lecture),
                 navigationIcon = Icons.Default.ArrowBack,
                 onBackArrowClick = { navigator.popBackStack() }
             )

@@ -63,7 +63,7 @@ fun TimetableScreen(
         scaffoldState = scaffoldState,
         topBar = {
             StandardTopBar(
-                title = R.string.timetable,
+                title = stringResource(R.string.timetable),
                 elevation = 0.dp
             )
         },

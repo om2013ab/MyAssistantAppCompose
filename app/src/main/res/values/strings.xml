@@ -43,4 +43,5 @@
     <string name="deadline">Deadline</string>
     <string name="description">Short description</string>
     <string name="back">Back</string>
+    <string name="delete_selected_msg">Are you sure you want to delete all selected assignments ?</string>
 </resources>

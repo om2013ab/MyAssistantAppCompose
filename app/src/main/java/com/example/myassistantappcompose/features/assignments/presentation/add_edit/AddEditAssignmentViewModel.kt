@@ -21,7 +21,6 @@ class AddEditAssignmentViewModel @Inject constructor(
     ): ViewModel() {
 
     val courses = courseDao.getAllCourses()
-    val assignments = assignmentDao.getAllAssignments()
 
     var addEditState by mutableStateOf(AddEditAssignmentState())
         private set

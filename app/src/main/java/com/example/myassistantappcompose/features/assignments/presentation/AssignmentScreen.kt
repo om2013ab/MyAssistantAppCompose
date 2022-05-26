@@ -1,17 +1,24 @@
 package com.example.myassistantappcompose.features.assignments.presentation
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -20,12 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myassistantappcompose.R
+import com.example.myassistantappcompose.core.presentation.UiEvent
+import com.example.myassistantappcompose.core.presentation.composable.StandardAlertDialog
 import com.example.myassistantappcompose.core.presentation.composable.StandardFab
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
 import com.example.myassistantappcompose.core.presentation.ui.theme.AssignmentColor
 import com.example.myassistantappcompose.core.util.Constants.DATE_PATTERN
 import com.example.myassistantappcompose.features.assignments.data.AssignmentEntity
-import com.example.myassistantappcompose.features.assignments.presentation.add_edit.AddEditAssignmentViewModel
 import com.example.myassistantappcompose.features.destinations.AddEditAssignmentScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -37,49 +45,94 @@ import java.util.*
 @Composable
 fun AssignmentScreen(
     navigator: DestinationsNavigator,
-    viewModel: AddEditAssignmentViewModel = hiltViewModel()
+    viewModel: AssignmentViewModel = hiltViewModel()
 ) {
+    val scaffoldState = rememberScaffoldState()
     val assignments by viewModel.assignments.collectAsState(emptyList())
+    val selectedAssignments = viewModel.assignmentState.selectedAssignments
+    val multiSelectionMode = viewModel.assignmentState.multiSelectionMode
+
+    LaunchedEffect(key1 = scaffoldState) {
+        viewModel.uiEvent.collect {
+            when (it) {
+                is UiEvent.Navigate -> {
+                    navigator.navigate(it.destination)
+                }
+                is UiEvent.ShowSnackBar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(it.message)
+                }
+                else -> Unit
+            }
+        }
+    }
+
 
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
-            StandardTopBar(title = R.string.assignments)
+            val toolbarTitle = if (multiSelectionMode) {
+                if (selectedAssignments.size == 1) "${selectedAssignments.size} assignment selected" else "${selectedAssignments.size} assignments selected"
+            } else {
+                stringResource(id = R.string.assignments)
+            }
+
+            val toolbarBackground =
+                if (multiSelectionMode) Color.LightGray else MaterialTheme.colors.primary
+            StandardTopBar(
+                title = toolbarTitle,
+                backgroundColor = toolbarBackground,
+                navigationIcon = if (multiSelectionMode) Icons.Default.ArrowBack else null,
+                onBackArrowClick = { viewModel.onAssignmentEvent(AssignmentEvent.OnCloseMultiSelectionMode) },
+                actionIcon = if (multiSelectionMode) Icons.Default.Delete else null,
+                onActionIconClick = { viewModel.onAssignmentEvent(AssignmentEvent.OnShowDialog) }
+            )
         },
         floatingActionButton = {
             StandardFab(
                 contentDesc = R.string.add_new_assignment,
-                onClick = {navigator.navigate(AddEditAssignmentScreenDestination())}
+                onClick = { navigator.navigate(AddEditAssignmentScreenDestination()) }
             )
         }
     ) {
-        LazyColumn(contentPadding = PaddingValues(16.dp)){
-            items(items = assignments){ assignment ->
+        if (viewModel.assignmentState.showDialog) {
+            StandardAlertDialog(
+                title = R.string.confirm_deletion,
+                text = R.string.delete_selected_msg,
+                onConfirm = { viewModel.onAssignmentEvent(AssignmentEvent.OnDeleteConfirmed)},
+                onDismiss = { viewModel.onAssignmentEvent(AssignmentEvent.OnDismissDialog) }
+            )
+        }
+        LazyColumn(contentPadding = PaddingValues(16.dp)) {
+            items(items = assignments) { assignment ->
                 AssignmentItem(
                     assignment = assignment,
-                    onAssignmentClick = {
-                        navigator.navigate(AddEditAssignmentScreenDestination(assignmentEntity = assignment))
-                    }
+                    selected = selectedAssignments.contains(assignment),
+                    onEvent = viewModel::onAssignmentEvent
                 )
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun AssignmentItem(
+private fun AssignmentItem(
     assignment: AssignmentEntity,
-    onAssignmentClick : () -> Unit
+    selected: Boolean,
+    onEvent: (AssignmentEvent) -> Unit
 ) {
     val deadline = SimpleDateFormat(DATE_PATTERN, Locale.ROOT).format(assignment.deadline)
     Card(
         modifier = Modifier
             .padding(bottom = 16.dp)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .combinedClickable(
+                onClick = { onEvent(AssignmentEvent.OnAssignmentClick(assignment)) },
+                onLongClick = { onEvent(AssignmentEvent.OnAssignmentLongClick(assignment)) }
+            ),
         shape = RoundedCornerShape(10.dp),
         elevation = 8.dp,
-        backgroundColor = AssignmentColor,
-        onClick = {onAssignmentClick()}
+        backgroundColor = if (selected) AssignmentColor else Color.White,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -93,7 +146,6 @@ fun AssignmentItem(
                 text = assignment.courseCode,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                color = Color.White,
                 fontSize = 18.sp
             )
             Divider(modifier = Modifier.fillMaxWidth())

@@ -47,7 +47,7 @@ fun AddEditAssignmentScreen(
     Scaffold(
         topBar = {
             StandardTopBar(
-                title = R.string.add_new_assignment,
+                title = stringResource(R.string.add_new_assignment),
                 navigationIcon = Icons.Default.ArrowBack,
                 onBackArrowClick = { navigator.popBackStack() }
             )
@@ -107,7 +107,7 @@ fun AddEditAssignmentScreen(
 }
 
 @Composable
-fun DatePicker(
+private fun DatePicker(
     context: Context,
     selectedDate: Date?,
     dateChange: (Date?) -> Unit

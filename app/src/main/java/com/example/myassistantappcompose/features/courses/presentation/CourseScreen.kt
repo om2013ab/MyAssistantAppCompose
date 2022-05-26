@@ -1,6 +1,5 @@
 package com.example.myassistantappcompose.features.courses.presentation
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
@@ -8,6 +7,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -84,9 +85,9 @@ fun CourseScreen(
         scaffoldState = scaffoldState,
         topBar = {
             StandardTopBar(
-                title = R.string.courses,
-                showMenuActionIcon = true,
-                onMenuIconClick = { menuExpanded = true },
+                title = stringResource(R.string.courses),
+                actionIcon = Icons.Default.MoreVert,
+                onActionIconClick = { menuExpanded = true },
                 dropdownMenu = {
                     MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(8.dp))) {
                         DropdownMenu(
