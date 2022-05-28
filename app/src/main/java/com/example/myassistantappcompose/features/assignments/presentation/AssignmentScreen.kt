@@ -8,12 +8,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,7 +77,7 @@ fun AssignmentScreen(
             StandardTopBar(
                 title = toolbarTitle,
                 backgroundColor = toolbarBackground,
-                navigationIcon = if (multiSelectionMode) Icons.Default.ArrowBack else null,
+                navigationIcon = if (multiSelectionMode) Icons.Default.Close else null,
                 onBackArrowClick = { viewModel.onAssignmentEvent(AssignmentEvent.OnCloseMultiSelectionMode) },
                 actionIcon = if (multiSelectionMode) Icons.Default.Delete else null,
                 onActionIconClick = { viewModel.onAssignmentEvent(AssignmentEvent.OnShowDialog) }
@@ -98,7 +94,7 @@ fun AssignmentScreen(
             StandardAlertDialog(
                 title = R.string.confirm_deletion,
                 text = R.string.delete_selected_msg,
-                onConfirm = { viewModel.onAssignmentEvent(AssignmentEvent.OnDeleteConfirmed)},
+                onConfirm = { viewModel.onAssignmentEvent(AssignmentEvent.OnDeleteConfirmed) },
                 onDismiss = { viewModel.onAssignmentEvent(AssignmentEvent.OnDismissDialog) }
             )
         }
@@ -107,7 +103,8 @@ fun AssignmentScreen(
                 AssignmentItem(
                     assignment = assignment,
                     selected = selectedAssignments.contains(assignment),
-                    onEvent = viewModel::onAssignmentEvent
+                    multiSelectionMode = multiSelectionMode,
+                    onEvent = viewModel::onAssignmentEvent,
                 )
             }
         }
@@ -118,51 +115,61 @@ fun AssignmentScreen(
 @Composable
 private fun AssignmentItem(
     assignment: AssignmentEntity,
+    multiSelectionMode: Boolean,
     selected: Boolean,
     onEvent: (AssignmentEvent) -> Unit
 ) {
+
     val deadline = SimpleDateFormat(DATE_PATTERN, Locale.ROOT).format(assignment.deadline)
-    Card(
-        modifier = Modifier
-            .padding(bottom = 16.dp)
-            .fillMaxSize()
-            .combinedClickable(
-                onClick = { onEvent(AssignmentEvent.OnAssignmentClick(assignment)) },
-                onLongClick = { onEvent(AssignmentEvent.OnAssignmentLongClick(assignment)) }
-            ),
-        shape = RoundedCornerShape(10.dp),
-        elevation = 8.dp,
-        backgroundColor = if (selected) AssignmentColor else Color.White,
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+        Card(
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+                .align(Alignment.Center)
+                .combinedClickable(
+                    onClick = { onEvent(AssignmentEvent.OnAssignmentClick(assignment)) },
+                    onLongClick = { onEvent(AssignmentEvent.OnAssignmentLongClick(assignment)) }
+                ),
+            shape = RoundedCornerShape(10.dp),
+            elevation = 8.dp,
+            backgroundColor = AssignmentColor
         ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                text = assignment.courseCode,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-            Divider(modifier = Modifier.fillMaxWidth())
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = stringResource(id = R.string.deadline), fontSize = 12.sp)
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(text = deadline)
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                text = assignment.description,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+            Column(
+
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    text = assignment.courseCode,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+                Divider()
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = stringResource(id = R.string.deadline), fontSize = 12.sp)
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(text = deadline)
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                    text = assignment.description,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+            }
+        }
+        if (multiSelectionMode) {
+            Icon(
+                modifier = Modifier.align(Alignment.CenterEnd).padding(end = 6.dp),
+                imageVector = if (selected) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
+                contentDescription = null,
             )
 
         }
     }
+
 }
