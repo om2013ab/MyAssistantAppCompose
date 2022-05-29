@@ -19,13 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -130,7 +128,6 @@ private fun AssignmentItem(
 ) {
     var textExpanded by rememberSaveable { mutableStateOf(false) }
 
-    val deadline = SimpleDateFormat(DATE_PATTERN, Locale.ROOT).format(assignment.deadline)
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
         Card(
             modifier = Modifier
@@ -159,19 +156,28 @@ private fun AssignmentItem(
                 Divider()
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = stringResource(id = R.string.deadline), fontSize = 12.sp)
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(text = deadline)
+                Text(
+                    text = SimpleDateFormat(DATE_PATTERN, Locale.ROOT).format(assignment.deadline),
+                    color = MaterialTheme.colors.primary,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(16.dp))
                 BasicReadMoreText(
                     text = assignment.description,
                     expanded = textExpanded,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { textExpanded = !textExpanded }
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                        .clickable { if(!multiSelectionMode) textExpanded = !textExpanded }
+                        .padding(start = 8.dp, end = 8.dp, bottom = 16.dp),
+                    style = TextStyle(
+                        textAlign = TextAlign.Center,
+                        lineHeight = 20.sp
+                    ),
                     readMoreText = "Read more",
                     readMoreMaxLines = 2,
                     readMoreStyle = SpanStyle(
                         color = MaterialTheme.colors.primary,
+                        textDecoration = TextDecoration.Underline,
+                        fontWeight = FontWeight.Bold
                     )
                 )
             }
