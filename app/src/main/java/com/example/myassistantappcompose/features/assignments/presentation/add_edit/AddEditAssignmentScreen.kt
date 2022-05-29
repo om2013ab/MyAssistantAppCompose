@@ -47,7 +47,7 @@ fun AddEditAssignmentScreen(
     Scaffold(
         topBar = {
             StandardTopBar(
-                title = stringResource(R.string.add_new_assignment),
+                title = stringResource(if(assignmentEntity != null) R.string.edit_assignemnt else R.string.add_new_assignment),
                 navigationIcon = Icons.Default.ArrowBack,
                 onBackArrowClick = { navigator.popBackStack() }
             )

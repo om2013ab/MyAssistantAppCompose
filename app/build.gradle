@@ -96,5 +96,8 @@ dependencies {
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 
+    //Readmore
+    implementation "com.webtoonscorp.android:readmore-foundation:1.0.0"
+
 
 }

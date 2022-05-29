@@ -1,24 +1,31 @@
 package com.example.myassistantappcompose.features.assignments.presentation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,6 +40,8 @@ import com.example.myassistantappcompose.features.assignments.data.AssignmentEnt
 import com.example.myassistantappcompose.features.destinations.AddEditAssignmentScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.webtoonscorp.android.readmore.foundation.BasicReadMoreText
+import com.webtoonscorp.android.readmore.foundation.ReadMoreTextOverflow
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -119,6 +128,7 @@ private fun AssignmentItem(
     selected: Boolean,
     onEvent: (AssignmentEvent) -> Unit
 ) {
+    var textExpanded by rememberSaveable { mutableStateOf(false) }
 
     val deadline = SimpleDateFormat(DATE_PATTERN, Locale.ROOT).format(assignment.deadline)
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
@@ -151,20 +161,26 @@ private fun AssignmentItem(
                 Text(text = stringResource(id = R.string.deadline), fontSize = 12.sp)
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(text = deadline)
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                BasicReadMoreText(
                     text = assignment.description,
-                    textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    expanded = textExpanded,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { textExpanded = !textExpanded }
+                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                    readMoreText = "Read more",
+                    readMoreMaxLines = 2,
+                    readMoreStyle = SpanStyle(
+                        color = MaterialTheme.colors.primary,
+                    )
                 )
-
             }
         }
         if (multiSelectionMode) {
             Icon(
-                modifier = Modifier.align(Alignment.CenterEnd).padding(end = 6.dp),
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 6.dp),
                 imageVector = if (selected) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
                 contentDescription = null,
             )
