@@ -1,4 +1,4 @@
-package com.example.myassistantappcompose.features.assignments.presentation.add_edit
+package com.example.myassistantappcompose.features.tests.presentation.add_edit
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -14,89 +14,88 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myassistantappcompose.R
-import com.example.myassistantappcompose.core.presentation.composable.CourseCodeExposedDropdownMenu
-import com.example.myassistantappcompose.core.presentation.composable.DatePicker
-import com.example.myassistantappcompose.core.presentation.composable.StandardOutlinedTextField
-import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
-import com.example.myassistantappcompose.features.assignments.data.AssignmentEntity
+import com.example.myassistantappcompose.core.presentation.composable.*
+import com.example.myassistantappcompose.features.tests.data.TestEntity
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @ExperimentalMaterialApi
 @Destination
 @Composable
-fun AddEditAssignmentScreen(
+fun AddEditTestScreen(
     navigator: DestinationsNavigator,
-    viewModel: AddEditAssignmentViewModel = hiltViewModel(),
-    hideBottomNav: Boolean = true,
-    assignmentEntity: AssignmentEntity?
+    viewModel: AddEditTestViewModel = hiltViewModel(),
+    testEntity: TestEntity?
 ) {
-
-    val courses by viewModel.courses.collectAsState(emptyList())
-
-
-    val addEditState = viewModel.addEditState
     val context = LocalContext.current
-    val enableButton = addEditState.selectedCode != null && addEditState.selectedDeadline != null
-
+    val courses by viewModel.courses.collectAsState(emptyList())
+    val addEditState = viewModel.addEditState
+    val enableButton = addEditState.selectedCode != null && addEditState.selectedDate != null && addEditState.selectedTime != null
     Scaffold(
         topBar = {
             StandardTopBar(
-                title = stringResource(if(assignmentEntity != null) R.string.edit_assignemnt else R.string.add_new_assignment),
+                title = stringResource( if (testEntity != null) R.string.update_test else R.string.add_new_test),
                 navigationIcon = Icons.Default.ArrowBack,
-                onNavigationIconClick = { navigator.popBackStack() }
+                onNavigationIconClick = {navigator.popBackStack()}
             )
         }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
         ) {
             CourseCodeExposedDropdownMenu(
                 courseCodes = courses.map { it.courseCode },
                 selectedCode = addEditState.selectedCode,
                 selectedCodeChange = {
                     viewModel.onAddEditEvent(
-                        AddEditAssignmentEvent.OnCourseCodeChange(
-                            it
-                        )
+                        AddEditTestEvent.OnCourseCodeChange(it)
                     )
-                },
+                }
             )
             Spacer(modifier = Modifier.height(24.dp))
-            Text(text = stringResource(id = R.string.deadline), fontWeight = FontWeight.Bold)
+            Text(text = stringResource(id = R.string.date), fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
             DatePicker(
                 context = context,
-                selectedDate = addEditState.selectedDeadline,
+                selectedDate = addEditState.selectedDate,
                 dateChange = {
-                    viewModel.onAddEditEvent(AddEditAssignmentEvent.OnDeadlineChange(it))
+                    viewModel.onAddEditEvent(AddEditTestEvent.OnDateChange(it))
+                }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = stringResource(id = R.string.time), fontWeight = FontWeight.Bold)
+            TimePicker(
+                context = context,
+                selectedTime = addEditState.selectedTime,
+                timeChange = {
+                    viewModel.onAddEditEvent(AddEditTestEvent.OnTimeChange(it))
                 }
             )
             Spacer(modifier = Modifier.height(16.dp))
             StandardOutlinedTextField(
-                value = addEditState.enteredDescription,
-                label = R.string.description,
-                onValueChanged = { viewModel.onAddEditEvent(AddEditAssignmentEvent.OnDescriptionChange(it)) },
+                value = addEditState.enteredNote,
+                label = R.string.note,
+                onValueChanged = { viewModel.onAddEditEvent(AddEditTestEvent.OnNoteChange(it)) },
             )
             Spacer(modifier = Modifier.height(60.dp))
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    viewModel.onAddEditEvent(AddEditAssignmentEvent.OnAddAssignment)
+                    viewModel.onAddEditEvent(AddEditTestEvent.OnAddTest)
                     navigator.popBackStack()
                 },
                 enabled = enableButton
             ) {
-                Text(stringResource(if (assignmentEntity != null) R.string.save else R.string.add))
+                Text(stringResource(if (testEntity != null) R.string.save else R.string.add))
             }
             TextButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { navigator.popBackStack() }
             ) {
-                Text(stringResource(if (assignmentEntity != null) R.string.back else R.string.cancel))
+                Text(stringResource(if (testEntity != null) R.string.back else R.string.cancel))
             }
+
         }
     }
 }

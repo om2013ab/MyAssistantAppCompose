@@ -24,7 +24,7 @@
     <string name="edit_course">Edit course info</string>
     <string name="save">Save</string>
     <string name="add_new_lecture">Add a new lecture</string>
-    <string name="time">Time:</string>
+    <string name="time">Time</string>
     <string name="time_from">From</string>
     <string name="time_to">To</string>
     <string name="venue">Venue</string>
@@ -46,4 +46,8 @@
     <string name="delete_selected_msg">Are you sure you want to delete all selected assignments ?</string>
     <string name="edit_assignemnt">Edit assignment</string>
     <string name="edit_lecture">Edit lecture</string>
+    <string name="add_new_test">Add new test</string>
+    <string name="date">Date</string>
+    <string name="note">Note</string>
+    <string name="update_test">Update test</string>
 </resources>

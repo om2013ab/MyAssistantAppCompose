@@ -19,16 +19,13 @@ import com.example.myassistantappcompose.R
 import com.example.myassistantappcompose.core.presentation.composable.CourseCodeExposedDropdownMenu
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
 import com.example.myassistantappcompose.core.presentation.composable.StandardOutlinedTextField
+import com.example.myassistantappcompose.core.presentation.composable.TimePicker
 import com.example.myassistantappcompose.core.util.Constants.TIME_PATTERN
 import com.example.myassistantappcompose.features.timetable.data.TimetableEntity
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.DurationUnit
 
 @ExperimentalMaterialApi
 @Destination
@@ -53,7 +50,7 @@ fun AddEditLectureScreen(
             StandardTopBar(
                 title = stringResource(if (timetableEntity != null) R.string.edit_lecture else R.string.add_new_lecture),
                 navigationIcon = Icons.Default.ArrowBack,
-                onBackArrowClick = { navigator.popBackStack() }
+                onNavigationIconClick = { navigator.popBackStack() }
             )
         }
     ) {
@@ -142,50 +139,3 @@ fun AddEditLectureScreen(
     }
 }
 
-@ExperimentalMaterialApi
-@Composable
-private fun TimePicker(
-    context: Context,
-    selectedTime: Date?,
-    timeChange: (Date?) -> Unit
-) {
-    val calendar = Calendar.getInstance()
-    val curHour = calendar.get(Calendar.HOUR)
-    val curMinute = calendar.get(Calendar.MINUTE)
-
-    val timePickerDialog = TimePickerDialog(
-        context,
-        { _, hour: Int, minute: Int ->
-            val time = calendar.apply {
-                set(Calendar.HOUR_OF_DAY,hour)
-                set(Calendar.MINUTE,minute)
-            }
-            timeChange(time.time)
-        }, curHour, curMinute, false
-    )
-
-    OutlinedButton(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = { timePickerDialog.show() },
-    ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            val formattedTime = selectedTime?.let { SimpleDateFormat(TIME_PATTERN, Locale.ROOT).format(it) }
-            Text(text = formattedTime ?:"Click to pick time" , modifier = Modifier.align(Alignment.Center))
-            if (selectedTime != null) {
-                IconButton(
-                    onClick = { timeChange(null) },
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .size(15.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Cancel,
-                        contentDescription = stringResource(id = R.string.clear_text),
-                    )
-                }
-            }
-
-        }
-
-    }
-}

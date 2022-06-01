@@ -36,6 +36,8 @@ sealed class BottomNavDestinations(
         unSelectedIcon = Icons.Outlined.Assignment,
         label = R.string.assignments
     )
+    @ExperimentalFoundationApi
+    @ExperimentalMaterialApi
     object TestsScreen: BottomNavDestinations(
         direction = TestScreenDestination,
         selectedIcon = Icons.Filled.NoteAdd,

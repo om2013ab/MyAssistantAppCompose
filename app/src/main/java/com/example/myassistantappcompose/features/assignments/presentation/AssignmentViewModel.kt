@@ -50,10 +50,11 @@ class AssignmentViewModel @Inject constructor(
                 }
             }
             is AssignmentEvent.OnAssignmentLongClick -> {
-                if (!assignmentState.multiSelectionMode) {
-                    assignmentState = assignmentState.copy(multiSelectionMode = true)
-                }
+                assignmentState = assignmentState.copy(multiSelectionMode = !assignmentState.multiSelectionMode)
                 addOrRemoveSelectedAssignments(event.assignmentEntity)
+                if (!assignmentState.multiSelectionMode) {
+                    assignmentState = assignmentState.copy(selectedAssignments = emptyList())
+                }
             }
 
             AssignmentEvent.OnCloseMultiSelectionMode -> { assignmentState = AssignmentState()}
@@ -83,10 +84,11 @@ class AssignmentViewModel @Inject constructor(
                 assignmentState.selectedAssignments.toMutableList().apply {
                     remove(assignmentEntity)
                 }
+            assignmentState = assignmentState.copy(selectedAssignments = selectedAssignmentsUpdated)
+
             if (selectedAssignmentsUpdated.isEmpty()) {
                 assignmentState = assignmentState.copy(multiSelectionMode = false)
             }
-            assignmentState = assignmentState.copy(selectedAssignments = selectedAssignmentsUpdated)
         } else {
             val selectedAssignmentsUpdated =
                 assignmentState.selectedAssignments.toMutableList().apply {

@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditAssignmentViewModel @Inject constructor(
     private val assignmentDao: AssignmentDao,
-    private val courseDao: CourseDao,
+    courseDao: CourseDao,
     savedStateHandle: SavedStateHandle,
     ): ViewModel() {
 

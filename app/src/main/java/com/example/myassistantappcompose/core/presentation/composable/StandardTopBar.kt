@@ -14,7 +14,7 @@ fun StandardTopBar(
     backgroundColor: Color = MaterialTheme.colors.primary,
     elevation: Dp = AppBarDefaults.TopAppBarElevation,
     navigationIcon: ImageVector? = null,
-    onBackArrowClick: () -> Unit = {},
+    onNavigationIconClick: () -> Unit = {},
     actionIcon: ImageVector? = null,
     onActionIconClick: () -> Unit = {},
     dropdownMenu: @Composable () -> Unit = {}
@@ -27,7 +27,7 @@ fun StandardTopBar(
         },
         navigationIcon = if (navigationIcon != null){
             {
-                IconButton(onClick = {onBackArrowClick()}) {
+                IconButton(onClick = {onNavigationIconClick()}) {
                     Icon(imageVector = navigationIcon, contentDescription = null)
                 }
             }

@@ -47,7 +47,7 @@ fun CourseEditScreen(
             StandardTopBar(
                 title = stringResource(R.string.edit_course),
                 navigationIcon = Icons.Default.ArrowBack,
-                onBackArrowClick = {
+                onNavigationIconClick = {
                     viewModel.onEditEvent(EditEvent.OnBackArrowClick)
                 }
             )

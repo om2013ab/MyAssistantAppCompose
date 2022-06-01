@@ -7,23 +7,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,7 +35,6 @@ import com.example.myassistantappcompose.features.destinations.AddEditAssignment
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.webtoonscorp.android.readmore.foundation.BasicReadMoreText
-import com.webtoonscorp.android.readmore.foundation.ReadMoreTextOverflow
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -74,7 +69,7 @@ fun AssignmentScreen(
         scaffoldState = scaffoldState,
         topBar = {
             val toolbarTitle = if (multiSelectionMode) {
-                if (selectedAssignments.size == 1) "${selectedAssignments.size} assignment selected" else "${selectedAssignments.size} assignments selected"
+                if (selectedAssignments.size == 1) "1 assignment selected" else "${selectedAssignments.size} assignments selected"
             } else {
                 stringResource(id = R.string.assignments)
             }
@@ -85,7 +80,7 @@ fun AssignmentScreen(
                 title = toolbarTitle,
                 backgroundColor = toolbarBackground,
                 navigationIcon = if (multiSelectionMode) Icons.Default.Close else null,
-                onBackArrowClick = { viewModel.onAssignmentEvent(AssignmentEvent.OnCloseMultiSelectionMode) },
+                onNavigationIconClick = { viewModel.onAssignmentEvent(AssignmentEvent.OnCloseMultiSelectionMode) },
                 actionIcon = if (multiSelectionMode) Icons.Default.Delete else null,
                 onActionIconClick = { viewModel.onAssignmentEvent(AssignmentEvent.OnShowDialog) }
             )
@@ -142,7 +137,6 @@ private fun AssignmentItem(
             backgroundColor = AssignmentColor
         ) {
             Column(
-
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -154,7 +148,7 @@ private fun AssignmentItem(
                     fontSize = 18.sp
                 )
                 Divider()
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(text = stringResource(id = R.string.deadline), fontSize = 12.sp)
                 Text(
                     text = SimpleDateFormat(DATE_PATTERN, Locale.ROOT).format(assignment.deadline),
