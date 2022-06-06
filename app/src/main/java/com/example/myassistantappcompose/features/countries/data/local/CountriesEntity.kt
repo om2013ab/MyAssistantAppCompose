@@ -1,4 +1,4 @@
-package com.example.myassistantappcompose.features.holidays.data.local
+package com.example.myassistantappcompose.features.countries.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

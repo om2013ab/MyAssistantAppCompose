@@ -1,4 +1,4 @@
-package com.example.myassistantappcompose.features.holidays.presentation.countries
+package com.example.myassistantappcompose.features.countries.presentation
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -7,11 +7,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myassistantappcompose.core.presentation.UiEvent
-import com.example.myassistantappcompose.features.holidays.presentation.util.Resource
-import com.example.myassistantappcompose.features.holidays.data.repository.HolidayRepository
+import com.example.myassistantappcompose.core.presentation.util.Resource
+import com.example.myassistantappcompose.features.countries.data.repository.HolidayRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject

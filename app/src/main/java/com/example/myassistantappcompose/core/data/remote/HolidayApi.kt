@@ -1,7 +1,7 @@
-package com.example.myassistantappcompose.features.holidays.data.remote
+package com.example.myassistantappcompose.core.data.remote
 
 import com.example.myassistantappcompose.BuildConfig.API_KEY
-import com.example.myassistantappcompose.features.holidays.data.remote.models.CountriesResponse
+import com.example.myassistantappcompose.features.countries.data.remote.response.CountriesResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

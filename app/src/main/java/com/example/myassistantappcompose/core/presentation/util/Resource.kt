@@ -1,4 +1,4 @@
-package com.example.myassistantappcompose.features.holidays.presentation.util
+package com.example.myassistantappcompose.core.presentation.util
 
 sealed class Resource<T>(val data: T?, val message: String? = null) {
     class Success<T>(data: T?) : Resource<T>(data)

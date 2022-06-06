@@ -1,4 +1,4 @@
-package com.example.myassistantappcompose.features.holidays.presentation.countries
+package com.example.myassistantappcompose.features.countries.presentation
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myassistantappcompose.core.presentation.UiEvent
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
-import com.example.myassistantappcompose.features.holidays.data.remote.models.CountriesInfo
+import com.example.myassistantappcompose.features.countries.data.remote.response.CountriesInfo
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 

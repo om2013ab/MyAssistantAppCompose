@@ -1,4 +1,4 @@
-package com.example.myassistantappcompose.core.data
+package com.example.myassistantappcompose.core.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -7,8 +7,8 @@ import com.example.myassistantappcompose.features.assignments.data.AssignmentDao
 import com.example.myassistantappcompose.features.assignments.data.AssignmentEntity
 import com.example.myassistantappcompose.features.courses.data.CourseDao
 import com.example.myassistantappcompose.features.courses.data.CourseEntity
-import com.example.myassistantappcompose.features.holidays.data.local.CountriesDao
-import com.example.myassistantappcompose.features.holidays.data.local.CountriesEntity
+import com.example.myassistantappcompose.features.countries.data.local.CountriesDao
+import com.example.myassistantappcompose.features.countries.data.local.CountriesEntity
 import com.example.myassistantappcompose.features.tests.data.TestDao
 import com.example.myassistantappcompose.features.tests.data.TestEntity
 import com.example.myassistantappcompose.features.timetable.data.TimetableDao

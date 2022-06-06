@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myassistantappcompose.core.data.AppDatabase
+import com.example.myassistantappcompose.core.data.local.AppDatabase
 import com.example.myassistantappcompose.core.presentation.UiEvent
 import com.example.myassistantappcompose.features.courses.data.CourseEntity
 import dagger.hilt.android.lifecycle.HiltViewModel

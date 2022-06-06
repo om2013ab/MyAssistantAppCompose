@@ -1,8 +1,7 @@
-package com.example.myassistantappcompose.features.holidays.data.mapper
+package com.example.myassistantappcompose.features.countries.data.mapper
 
-import com.example.myassistantappcompose.features.holidays.data.local.CountriesEntity
-import com.example.myassistantappcompose.features.holidays.data.remote.models.Countries
-import com.example.myassistantappcompose.features.holidays.data.remote.models.CountriesInfo
+import com.example.myassistantappcompose.features.countries.data.local.CountriesEntity
+import com.example.myassistantappcompose.features.countries.data.remote.response.CountriesInfo
 
 fun CountriesEntity.toCountriesInfo(): CountriesInfo {
     return CountriesInfo(

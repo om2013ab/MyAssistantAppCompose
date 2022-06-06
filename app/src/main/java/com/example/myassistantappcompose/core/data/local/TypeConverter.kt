@@ -1,4 +1,4 @@
-package com.example.myassistantappcompose.core.data
+package com.example.myassistantappcompose.core.data.local
 
 import androidx.room.TypeConverter
 import java.util.*

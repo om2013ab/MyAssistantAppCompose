@@ -1,4 +1,4 @@
-package com.example.myassistantappcompose.features.holidays.data.remote.models
+package com.example.myassistantappcompose.features.countries.data.remote.response
 
 import com.google.gson.annotations.SerializedName
 

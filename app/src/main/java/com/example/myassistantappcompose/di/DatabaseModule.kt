@@ -2,10 +2,10 @@ package com.example.myassistantappcompose.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.myassistantappcompose.core.data.AppDatabase
+import com.example.myassistantappcompose.core.data.local.AppDatabase
 import com.example.myassistantappcompose.features.assignments.data.AssignmentDao
 import com.example.myassistantappcompose.features.courses.data.CourseDao
-import com.example.myassistantappcompose.features.holidays.data.local.CountriesDao
+import com.example.myassistantappcompose.features.countries.data.local.CountriesDao
 import com.example.myassistantappcompose.features.tests.data.TestDao
 import com.example.myassistantappcompose.features.timetable.data.TimetableDao
 import dagger.Module

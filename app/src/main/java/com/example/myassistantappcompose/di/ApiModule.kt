@@ -1,7 +1,7 @@
 package com.example.myassistantappcompose.di
 
 import com.example.myassistantappcompose.BuildConfig.BASE_URL
-import com.example.myassistantappcompose.features.holidays.data.remote.HolidayApi
+import com.example.myassistantappcompose.core.data.remote.HolidayApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
