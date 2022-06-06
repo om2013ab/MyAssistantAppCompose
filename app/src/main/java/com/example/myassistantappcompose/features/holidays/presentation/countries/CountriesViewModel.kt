@@ -7,10 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myassistantappcompose.core.presentation.UiEvent
-import com.example.myassistantappcompose.core.util.Resource
-import com.example.myassistantappcompose.features.holidays.domain.HolidayRepository
+import com.example.myassistantappcompose.features.holidays.presentation.util.Resource
+import com.example.myassistantappcompose.features.holidays.data.repository.HolidayRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,24 +31,28 @@ class CountriesViewModel @Inject constructor(
     }
 
     private fun getAllCountries() = viewModelScope.launch {
-        state = state.copy(isLoading = true)
-         when(val response = holidayRepository.getAllCountries()) {
-            is Resource.Success -> {
-                val data  = response.data
-                if (data != null) {
-                    state = state.copy(
-                        response = data,
-                        isLoading = false
-                    )
-                    Log.d("success","not null")
+        holidayRepository.getCountries(false).collect{
+            when(it) {
+                is Resource.Success -> {
+                    val data  = it.data
+                    if (data != null) {
+                        state = state.copy(
+                            response = data,
+                            isLoading = false
+                        )
+                        Log.d("success","not null")
+                    }
                 }
-            }
-            is Resource.Error -> {
-                uiEventChannel.send(UiEvent.ShowSnackBar(
-                    message = response.message ?: "Unknown error"
-                ))
-                state = state.copy(isLoading = false)
-                Log.d("error",response.message ?: "error occured")
+                is Resource.Error -> {
+                    uiEventChannel.send(UiEvent.ShowSnackBar(
+                        message = it.message ?: "Unknown error"
+                    ))
+                    state = state.copy(isLoading = false)
+                    Log.d("error",it.message ?: "error occured")
+                }
+                is Resource.Loading -> {
+                    state = state.copy(isLoading = it.isLoading)
+                }
             }
         }
     }
