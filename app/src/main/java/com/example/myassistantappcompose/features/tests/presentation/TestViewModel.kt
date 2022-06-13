@@ -19,7 +19,7 @@ import javax.inject.Inject
 @ExperimentalMaterialApi
 @HiltViewModel
 class TestViewModel @Inject constructor(
-    testDao: TestDao
+    private val testDao: TestDao
 ): ViewModel() {
 
     val tests = testDao.getAllTests()
@@ -52,6 +52,20 @@ class TestViewModel @Inject constructor(
             TestEvent.OnCloseMultiSelectionMode -> {
                 testState = TestState()
             }
+            TestEvent.OnShowDialog -> {
+                testState = testState.copy(showDialog = true)
+            }
+            TestEvent.OnDeleteConfirmed -> viewModelScope.launch{
+                testDao.deleteSelectedTests(testState.selectedTests)
+                uiEventChannel.send(UiEvent.ShowSnackBar(
+                    message = "${testState.selectedTests.size} tests deleted"
+                ))
+                testState = TestState()
+            }
+            TestEvent.OnDismissDialog -> {
+                testState = testState.copy(showDialog = false)
+            }
+
         }
     }
 

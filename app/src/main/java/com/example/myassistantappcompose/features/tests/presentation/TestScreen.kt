@@ -1,5 +1,6 @@
 package com.example.myassistantappcompose.features.tests.presentation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myassistantappcompose.R
 import com.example.myassistantappcompose.core.presentation.UiEvent
+import com.example.myassistantappcompose.core.presentation.composable.StandardAlertDialog
 import com.example.myassistantappcompose.core.presentation.composable.StandardFab
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
 import com.example.myassistantappcompose.core.presentation.ui.theme.TestColor
@@ -42,6 +44,7 @@ import com.webtoonscorp.android.readmore.foundation.BasicReadMoreText
 import java.text.SimpleDateFormat
 import java.util.*
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Destination
@@ -82,7 +85,8 @@ fun TestScreen(
                 backgroundColor = toolbarBackground,
                 navigationIcon = if (multiSelectionMode) Icons.Default.Close else null,
                 onNavigationIconClick = {viewModel.onTestEvent(TestEvent.OnCloseMultiSelectionMode)},
-                actionIcon = if (multiSelectionMode) Icons.Default.Delete else null
+                actionIcon = if (multiSelectionMode) Icons.Default.Delete else null,
+                onActionIconClick = {viewModel.onTestEvent(TestEvent.OnShowDialog)}
             )
         },
         floatingActionButton = {
@@ -92,6 +96,14 @@ fun TestScreen(
             )
         }
     ) {
+        if (viewModel.testState.showDialog) {
+            StandardAlertDialog(
+                title = R.string.confirm_deletion,
+                text = R.string.delete_test_msg,
+                onConfirm = {viewModel.onTestEvent(TestEvent.OnDeleteConfirmed)},
+                onDismiss = {viewModel.onTestEvent(TestEvent.OnDismissDialog)}
+            )
+        }
         LazyColumn(contentPadding = PaddingValues(16.dp)) {
             items(items = tests) { test ->
                 TestItem(
