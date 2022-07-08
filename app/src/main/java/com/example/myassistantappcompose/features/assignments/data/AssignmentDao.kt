@@ -16,5 +16,5 @@ interface AssignmentDao {
     suspend fun insertAssignment(assignmentEntity: AssignmentEntity)
 
     @Delete
-    suspend fun deleteSelectedAssignments(assignmentEntity: List<AssignmentEntity>)
+    suspend fun deleteSelectedAssignments(selectedAssignments: List<AssignmentEntity>)
 }

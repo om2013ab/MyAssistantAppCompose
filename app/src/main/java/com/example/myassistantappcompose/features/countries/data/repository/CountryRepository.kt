@@ -1,12 +1,14 @@
 package com.example.myassistantappcompose.features.countries.data.repository
 
 import androidx.room.withTransaction
+import com.example.myassistantappcompose.core.data.DataStoreManager
 import com.example.myassistantappcompose.core.data.local.AppDatabase
 import com.example.myassistantappcompose.features.countries.data.mapper.toCountriesEntity
 import com.example.myassistantappcompose.features.countries.data.mapper.toCountriesInfo
 import com.example.myassistantappcompose.core.presentation.util.Resource
 import com.example.myassistantappcompose.features.countries.data.remote.response.CountriesResponse
 import com.example.myassistantappcompose.core.data.remote.HolidayApi
+import com.example.myassistantappcompose.features.countries.data.local.CountriesDao
 import com.example.myassistantappcompose.features.countries.data.remote.response.Countries
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -16,11 +18,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class HolidayRepository @Inject constructor(
+class CountryRepository @Inject constructor(
     private val holidayApi: HolidayApi,
-    private val db: AppDatabase
+    private val db: AppDatabase,
+    private val dao: CountriesDao,
+    private val dataStoreManager: DataStoreManager
 ) {
-    private val dao = db.countriesDao()
 
     suspend fun getCountries(
         fetchFromRemote: Boolean
@@ -57,6 +60,13 @@ class HolidayRepository @Inject constructor(
             } catch (e: HttpException) {
                 emit(Resource.Error(e.localizedMessage ?: "Something went wrong"))
             }
+        }
+    }
+
+    suspend fun updateSelectedCountry(name: String, iso: String) {
+        dataStoreManager.apply {
+            saveCountryName(name)
+            saveCountryIso(iso)
         }
     }
 }

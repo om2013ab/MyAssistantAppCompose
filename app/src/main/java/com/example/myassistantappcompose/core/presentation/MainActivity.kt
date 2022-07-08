@@ -45,13 +45,7 @@ class MainActivity : ComponentActivity() {
                     bottomBar = {
                         if (hideBottomNav == null || !hideBottomNav) {
                             BottomBarSection(
-                                destinations = listOf(
-                                    BottomNavDestinations.CoursesScreen,
-                                    BottomNavDestinations.TimetableScreen,
-                                    BottomNavDestinations.AssignmentsScreen,
-                                    BottomNavDestinations.TestsScreen,
-                                    BottomNavDestinations.HolidaysScreen
-                                ),
+                                destinations = BottomNavDestinations.values(),
                                 currentDestination = navBackStackEntry?.navDestination,
                                 onBottomBarItemClick = {
                                     navController.popBackStack()

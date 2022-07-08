@@ -8,6 +8,7 @@ sealed class UiEvent {
         val message: String,
         val actionLabel: String? = null
     ): UiEvent()
+    data class ShowToast(val message: String): UiEvent()
     data class Navigate(val destination: Direction): UiEvent()
     object PopBackStack: UiEvent()
 }

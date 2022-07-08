@@ -12,7 +12,7 @@ import com.ramcosta.composedestinations.spec.Direction
 
 @Composable
 fun BottomBarSection(
-    destinations: List<BottomNavDestinations>,
+    destinations: Array<BottomNavDestinations>,
     currentDestination: Destination?,
     onBottomBarItemClick: (Direction) -> Unit
 ) {

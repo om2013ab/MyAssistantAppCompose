@@ -1,5 +1,6 @@
 package com.example.myassistantappcompose.features.assignments.presentation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -38,6 +39,7 @@ import com.webtoonscorp.android.readmore.foundation.BasicReadMoreText
 import java.text.SimpleDateFormat
 import java.util.*
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterialApi::class)
 @Destination()
 @Composable
@@ -95,7 +97,7 @@ fun AssignmentScreen(
         if (viewModel.assignmentState.showDialog) {
             StandardAlertDialog(
                 title = R.string.confirm_deletion,
-                text = R.string.delete_selected_msg,
+                text = R.string.delete_assignments_msg,
                 onConfirm = { viewModel.onAssignmentEvent(AssignmentEvent.OnDeleteConfirmed) },
                 onDismiss = { viewModel.onAssignmentEvent(AssignmentEvent.OnDismissDialog) }
             )
@@ -113,7 +115,7 @@ fun AssignmentScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun AssignmentItem(
     assignment: AssignmentEntity,

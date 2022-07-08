@@ -9,42 +9,45 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.myassistantappcompose.R
 import com.example.myassistantappcompose.features.destinations.*
+import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 
-sealed class BottomNavDestinations(
-    val direction: DirectionDestination,
+enum class BottomNavDestinations(
+    val direction: DirectionDestinationSpec,
     val selectedIcon: ImageVector,
     val unSelectedIcon: ImageVector,
     @StringRes val label: Int,
 ){
-    @ExperimentalFoundationApi
-    object CoursesScreen: BottomNavDestinations(
+   @ExperimentalFoundationApi
+   CoursesScreen(
         direction = CourseScreenDestination,
         selectedIcon = Icons.Filled.Book,
         unSelectedIcon = Icons.Outlined.Book,
         label = R.string.courses,
-    )
+    ),
     @ExperimentalMaterialApi
-    object TimetableScreen: BottomNavDestinations(
+    TimetableScreen(
         direction = TimetableScreenDestination,
         selectedIcon = Icons.Filled.InsertInvitation,
         unSelectedIcon = Icons.Outlined.InsertInvitation,
         label = R.string.timetable
-    )
-    object AssignmentsScreen: BottomNavDestinations(
+    ),
+    AssignmentsScreen(
         direction = AssignmentScreenDestination,
         selectedIcon = Icons.Filled.Assignment,
         unSelectedIcon = Icons.Outlined.Assignment,
         label = R.string.assignments
-    )
-    @ExperimentalFoundationApi
+    ),
+
     @ExperimentalMaterialApi
-    object TestsScreen: BottomNavDestinations(
+    @ExperimentalFoundationApi
+    TestsScreen(
         direction = TestScreenDestination,
         selectedIcon = Icons.Filled.NoteAdd,
         unSelectedIcon = Icons.Outlined.NoteAdd,
         label = R.string.tests
-    )
-    object HolidaysScreen: BottomNavDestinations(
+    ),
+    @ExperimentalMaterialApi
+    HolidaysScreen(
         direction = HolidayScreenDestination,
         selectedIcon = Icons.Filled.BeachAccess,
         unSelectedIcon = Icons.Outlined.BeachAccess,
