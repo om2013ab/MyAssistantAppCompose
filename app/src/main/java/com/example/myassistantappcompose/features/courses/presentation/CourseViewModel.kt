@@ -1,10 +1,9 @@
 package com.example.myassistantappcompose.features.courses.presentation
 
+import android.graphics.Color.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myassistantappcompose.core.presentation.UiEvent
@@ -14,8 +13,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
-import kotlin.random.Random
 
 @HiltViewModel
 class CourseViewModel @Inject constructor(
@@ -29,13 +28,6 @@ class CourseViewModel @Inject constructor(
 
     private var deletedCourse: CourseEntity? = null
 
-    private val colors = listOf(
-        Color.Blue,
-        Color.Green,
-        Color.Red,
-        Color.Magenta,
-        Color.Cyan,
-    ).map { it.toArgb() }
 
     private val uiEventChannel = Channel<UiEvent>()
     val uiEvent = uiEventChannel.receiveAsFlow()
@@ -64,13 +56,19 @@ class CourseViewModel @Inject constructor(
             }
             is CourseEvent.OnAddCourseConfirmed -> {
                 viewModelScope.launch {
+                    val random = Random()
+                    val color = argb(255,
+                       random.nextInt(256),
+                       random.nextInt(256),
+                       random.nextInt(256)
+                    )
                     val newCourse = CourseEntity(
                         courseName = courseState.courseName,
                         courseCode = courseState.courseCode,
                         courseHours = courseState.courseHours.toInt(),
                         courseLecturer = courseState.courseLecturer,
                         id = 0,
-                        color = Random.nextInt(from = colors.first(), until = colors.last())
+                        color = color
                     )
                     dao.insertCourse(newCourse)
                 }

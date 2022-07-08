@@ -67,7 +67,7 @@ fun HolidayScreen(
         scaffoldState = scaffoldState,
         topBar = {
             StandardTopBar(
-                title = state.countryName ?: "",
+                title = state.countryName ?: "Malaysia",
                 actionIcon = Icons.Default.ExpandMore,
                 onActionIconClick = { navigator.navigate(CountriesScreenDestination()) }
             )
