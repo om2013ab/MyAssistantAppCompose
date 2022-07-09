@@ -48,7 +48,7 @@
     <string name="unknown_venue">Unknown venue</string>
     <string name="no_courses">No Courses</string>
     <string name="no_courses_msg">To add a course, click on + and fill out the course information</string>
-    <string name="close_dialog">Close dialog</string>
+    <string name="close_dialog">Close</string>
     <string name="delete_all">Delete all</string>
     <string name="confirm">Confirm</string>
     <string name="dismiss">Dismiss</string>
@@ -65,4 +65,5 @@
     <string name="note">Note</string>
     <string name="update_test">Update test</string>
     <string name="delete_test_msg">Are you sure you want to delete all selected tests ?</string>
+    <string name="holiday_description">About the holiday</string>
 </resources>

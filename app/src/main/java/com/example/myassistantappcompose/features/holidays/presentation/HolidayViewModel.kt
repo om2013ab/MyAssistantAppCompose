@@ -78,6 +78,14 @@ class HolidayViewModel @Inject constructor(
         }
     }
 
+    fun onShowDialog() {
+        _state.value = _state.value.copy(showDialog = true)
+    }
+
+    fun onDismissDialog() {
+        _state.value = _state.value.copy(showDialog = false)
+    }
+
     fun getUserCountryIso(): String {
         val telephonyManager =
             getApplication<Application>().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager

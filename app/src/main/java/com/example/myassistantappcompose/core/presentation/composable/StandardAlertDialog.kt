@@ -11,8 +11,8 @@ import com.example.myassistantappcompose.R
 fun StandardAlertDialog(
     @StringRes title: Int,
     @StringRes text: Int,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onConfirm: () -> Unit = {},
+    onDismiss: () -> Unit = {}
 
 ) {
     AlertDialog(
@@ -27,6 +27,26 @@ fun StandardAlertDialog(
         dismissButton = {
             TextButton(onClick = {onDismiss()}) {
                 Text(stringResource(R.string.dismiss), color = Color.Gray)
+            }
+        }
+    )
+}
+
+@Composable
+fun InfoAlertDialog(
+    @StringRes title: Int,
+    text: String,
+    onDismiss: () -> Unit
+
+) {
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = { Text(stringResource(title))},
+        text = { Text(text)},
+        confirmButton = {},
+        dismissButton = {
+            TextButton(onClick = {onDismiss()}) {
+                Text(stringResource(R.string.close_dialog))
             }
         }
     )

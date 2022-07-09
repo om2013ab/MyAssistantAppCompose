@@ -18,6 +18,6 @@ fun Holiday.toHolidaysEntity(): HolidaysEntity {
         name = name,
         description = description,
         locations = locations,
-        isoDate = date.isoDate
+        isoDate = date.isoDate,
     )
 }

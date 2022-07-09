@@ -9,5 +9,6 @@ data class HolidayState(
     val year: Int? = null,
     val month: Int? = null,
     val holidays: List<HolidaysEntity>? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val showDialog: Boolean = false
 )
