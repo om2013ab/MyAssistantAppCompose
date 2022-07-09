@@ -1,6 +1,7 @@
 package com.example.myassistantappcompose.features.assignments.presentation
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -26,16 +27,17 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myassistantappcompose.R
 import com.example.myassistantappcompose.core.presentation.UiEvent
+import com.example.myassistantappcompose.core.presentation.composable.ExpandingText
 import com.example.myassistantappcompose.core.presentation.composable.StandardAlertDialog
 import com.example.myassistantappcompose.core.presentation.composable.StandardFab
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
 import com.example.myassistantappcompose.core.presentation.ui.theme.AssignmentColor
+import com.example.myassistantappcompose.core.presentation.ui.theme.PrimaryColor
 import com.example.myassistantappcompose.core.util.Constants.DATE_PATTERN
 import com.example.myassistantappcompose.features.assignments.data.AssignmentEntity
 import com.example.myassistantappcompose.features.destinations.AddEditAssignmentScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.webtoonscorp.android.readmore.foundation.BasicReadMoreText
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -123,7 +125,6 @@ private fun AssignmentItem(
     selected: Boolean,
     onEvent: (AssignmentEvent) -> Unit
 ) {
-    var textExpanded by rememberSaveable { mutableStateOf(false) }
 
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
         Card(
@@ -158,23 +159,9 @@ private fun AssignmentItem(
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                BasicReadMoreText(
+                ExpandingText(
                     text = assignment.description,
-                    expanded = textExpanded,
-                    modifier = Modifier
-                        .clickable { if(!multiSelectionMode) textExpanded = !textExpanded }
-                        .padding(start = 8.dp, end = 8.dp, bottom = 16.dp),
-                    style = TextStyle(
-                        textAlign = TextAlign.Center,
-                        lineHeight = 20.sp
-                    ),
-                    readMoreText = "Read more",
-                    readMoreMaxLines = 2,
-                    readMoreStyle = SpanStyle(
-                        color = MaterialTheme.colors.primary,
-                        textDecoration = TextDecoration.Underline,
-                        fontWeight = FontWeight.Bold
-                    )
+                    multiSelectionMode = multiSelectionMode
                 )
             }
         }
@@ -191,3 +178,5 @@ private fun AssignmentItem(
     }
 
 }
+
+

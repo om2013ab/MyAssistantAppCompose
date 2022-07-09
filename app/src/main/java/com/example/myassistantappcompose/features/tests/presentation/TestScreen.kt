@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myassistantappcompose.R
 import com.example.myassistantappcompose.core.presentation.UiEvent
+import com.example.myassistantappcompose.core.presentation.composable.ExpandingText
 import com.example.myassistantappcompose.core.presentation.composable.StandardAlertDialog
 import com.example.myassistantappcompose.core.presentation.composable.StandardFab
 import com.example.myassistantappcompose.core.presentation.composable.StandardTopBar
@@ -40,7 +41,6 @@ import com.example.myassistantappcompose.features.destinations.AddEditTestScreen
 import com.example.myassistantappcompose.features.tests.data.TestEntity
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.webtoonscorp.android.readmore.foundation.BasicReadMoreText
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -178,24 +178,7 @@ private fun TestItem(
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
-                BasicReadMoreText(
-                    text = test.note,
-                    expanded = textExpanded,
-                    modifier = Modifier
-                        .clickable { if (!multiSelectionMode) textExpanded = !textExpanded }
-                        .padding(start = 8.dp, end = 8.dp, bottom = 16.dp),
-                    style = TextStyle(
-                        textAlign = TextAlign.Center,
-                        lineHeight = 20.sp
-                    ),
-                    readMoreText = "Read more",
-                    readMoreMaxLines = 2,
-                    readMoreStyle = SpanStyle(
-                        color = MaterialTheme.colors.primary,
-                        textDecoration = TextDecoration.Underline,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
+                ExpandingText(text = test.note, multiSelectionMode = multiSelectionMode)
             }
         }
         if (multiSelectionMode) {
