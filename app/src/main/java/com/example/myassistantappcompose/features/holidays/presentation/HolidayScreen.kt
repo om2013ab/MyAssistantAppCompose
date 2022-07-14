@@ -42,8 +42,7 @@ fun HolidayScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
-
-    val state by viewModel.stateFlow.collectAsState()
+    val state = viewModel.holidayState
 
     LaunchedEffect(key1 = scaffoldState) {
         viewModel.uiEvent.collect {

@@ -125,7 +125,6 @@ private fun TestItem(
     selected: Boolean,
     onEvent: (TestEvent) -> Unit
 ) {
-    var textExpanded by rememberSaveable { mutableStateOf(false) }
 
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize() ){
         Card(

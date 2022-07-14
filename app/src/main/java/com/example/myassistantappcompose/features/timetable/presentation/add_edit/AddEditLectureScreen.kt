@@ -1,5 +1,6 @@
 package com.example.myassistantappcompose.features.timetable.presentation.add_edit
 
+import android.annotation.SuppressLint
 import android.app.TimePickerDialog
 import android.content.Context
 import androidx.compose.foundation.layout.*
@@ -27,6 +28,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import java.text.SimpleDateFormat
 import java.util.*
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @ExperimentalMaterialApi
 @Destination
 @Composable

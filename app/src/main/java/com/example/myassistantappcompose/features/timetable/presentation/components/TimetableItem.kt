@@ -24,9 +24,10 @@ import java.util.*
 @Composable
 fun TimetableItem(
     schedule: TimetableEntity,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
     onOptionClick: (index: Int) -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
     val formatter = SimpleDateFormat(TIME_PATTERN, Locale.ROOT)
     Card(
         modifier = Modifier
@@ -47,7 +48,7 @@ fun TimetableItem(
                     fontSize = 16.sp
                 )
                 IconButton(
-                    onClick = { expanded = true},
+                    onClick = { onExpandedChange(true)},
                     modifier = Modifier.align(Alignment.CenterEnd)
                 ) {
                     Icon(
@@ -57,13 +58,13 @@ fun TimetableItem(
                     MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(8.dp))) {
                         DropdownMenu(
                             expanded = expanded,
-                            onDismissRequest = { expanded = false }
+                            onDismissRequest = { onExpandedChange(false) }
                         ) {
                             val options = listOf(R.string.delete_option, R.string.edit_option)
                             options.forEachIndexed { index, option ->
                                 DropdownMenuItem(
                                     onClick = {
-                                        expanded = false
+                                        onExpandedChange(false)
                                         onOptionClick(index)
                                     }
                                 ) { Text(stringResource(option)) }

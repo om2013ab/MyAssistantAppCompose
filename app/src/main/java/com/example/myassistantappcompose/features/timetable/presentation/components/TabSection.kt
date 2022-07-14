@@ -10,14 +10,14 @@ import com.example.myassistantappcompose.features.timetable.presentation.Timetab
 fun TabSection(
     dayIndex: Int,
     days: List<String>,
-    viewModel: TimetableViewModel
+    onTabClick: (index: Int) -> Unit
 ) {
     TabRow(selectedTabIndex = dayIndex) {
         days.forEachIndexed { index, day ->
             Tab(
                 selected = dayIndex == index,
                 onClick = {
-                    viewModel.onDayIndexChange(index)
+                    onTabClick(index)
                 },
                 text = { Text(day) },
             )

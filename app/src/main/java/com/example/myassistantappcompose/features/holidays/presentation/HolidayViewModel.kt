@@ -4,6 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.telephony.TelephonyManager
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myassistantappcompose.core.data.DataStoreManager
@@ -26,9 +29,8 @@ class HolidayViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
 
-
-    private val _stateFlow = MutableStateFlow(HolidayState())
-    val stateFlow = _stateFlow.asStateFlow()
+    var holidayState by mutableStateOf(HolidayState())
+        private set
 
     private val uiEventChannel = Channel<UiEvent>()
     val uiEvent = uiEventChannel.receiveAsFlow()
@@ -38,48 +40,48 @@ class HolidayViewModel @Inject constructor(
         viewModelScope.launch {
             dataStoreManager.getCountryIso.collect{
                 Log.d("HolidayViewModel", it ?: "not found")
-                _stateFlow.value = _stateFlow.value.copy(countryIso = it)
+                holidayState = holidayState.copy(countryIso = it)
             }
         }
         viewModelScope.launch {
             dataStoreManager.getCountryName.collect{
                 Log.d("HolidayViewModel", it ?: "Not found")
-                _stateFlow.value = _stateFlow.value.copy(countryName = it)
+                holidayState = holidayState.copy(countryName = it)
             }
         }
         getAllHolidays()
     }
 
     private fun getAllHolidays() = viewModelScope.launch {
-        repository.getAllHolidays(true, stateFlow.value.countryIso ?: "my",2022).collect{
-            when(it){
+        repository.getAllHolidays(true, holidayState.countryIso ?: "my",2022).collect{ response ->
+            when(response){
                 is Resource.Success ->{
-                    val holidays = it.data?.response?.holidays
+                    val holidays = response.data?.response?.holidays
                     if (holidays != null) {
-                        _stateFlow.value = _stateFlow.value.copy(
+                        holidayState = holidayState.copy(
                             holidays = holidays.map { it.toHolidaysEntity() },
                         )
                     }
                 }
                 is Resource.Error -> {
                     uiEventChannel.send(UiEvent.ShowSnackBar(
-                        message = it.message ?: "Unknown error"
+                        message = response.message ?: "Unknown error"
                     ))
-                    _stateFlow.value = _stateFlow.value.copy(isLoading = false)
+                    holidayState = holidayState.copy(isLoading = false)
                 }
                 is Resource.Loading -> {
-                    _stateFlow.value = _stateFlow.value.copy(isLoading = it.isLoading)
+                    holidayState = holidayState.copy(isLoading = response.isLoading)
                 }
             }
         }
     }
 
     fun onHolidayClick(holiday: HolidaysEntity) {
-        _stateFlow.value = _stateFlow.value.copy(showDialog = true, clickedHoliday = holiday)
+        holidayState = holidayState.copy(showDialog = true, clickedHoliday = holiday)
     }
 
     fun onDismissDialog() {
-        _stateFlow.value = _stateFlow.value.copy(showDialog = false)
+        holidayState = holidayState.copy(showDialog = false)
     }
 
     fun getUserCountryIso(): String {
@@ -89,7 +91,7 @@ class HolidayViewModel @Inject constructor(
     }
 
     fun toggleMonthSelection(selectedMonth: Int) {
-        _stateFlow.value = _stateFlow.value.copy(monthIndex = selectedMonth)
+        holidayState = holidayState.copy(monthIndex = selectedMonth)
     }
 
 }

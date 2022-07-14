@@ -13,6 +13,13 @@
         <item>Nov</item>
         <item>Dec</item>
     </string-array>
+    <string-array name="days">
+        <item>Mon</item>
+        <item>Tues</item>
+        <item>Wed</item>
+        <item>Thur</item>
+        <item>Fri</item>
+    </string-array>
     <string name="app_name">MyAssistantAppCompose</string>
     <string name="courses">Courses</string>
     <string name="timetable">Timetable</string>

@@ -29,8 +29,8 @@ class CountriesViewModel @Inject constructor(
     application: Application
 ): AndroidViewModel(application) {
 
-    private val _state = MutableStateFlow(CountriesState())
-    val state = _state.asStateFlow()
+    var state by mutableStateOf(CountriesState())
+        private set
 
 
     private val uiEventChannel = Channel<UiEvent>()
@@ -46,22 +46,20 @@ class CountriesViewModel @Inject constructor(
                 is Resource.Success -> {
                     val data  = it.data
                     if (data != null) {
-                        _state.value = _state.value.copy(
+                        state = state.copy(
                             response = data,
                             isLoading = false
                         )
-                        Log.d("success","not null")
                     }
                 }
                 is Resource.Error -> {
                     uiEventChannel.send(UiEvent.ShowSnackBar(
                         message = it.message ?: "Unknown error"
                     ))
-                    _state.value = _state.value.copy(isLoading = false)
-                    Log.d("error",it.message ?: "error occured")
+                    state = state.copy(isLoading = false)
                 }
                 is Resource.Loading -> {
-                    _state.value = _state.value.copy(isLoading = it.isLoading)
+                    state = state.copy(isLoading = it.isLoading)
                 }
             }
         }

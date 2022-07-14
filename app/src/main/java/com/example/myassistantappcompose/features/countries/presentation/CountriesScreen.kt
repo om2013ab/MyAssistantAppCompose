@@ -38,7 +38,7 @@ fun CountriesScreen(
 ) {
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
-    val state by viewModel.state.collectAsState()
+    val state = viewModel.state
 
     LaunchedEffect(key1 = scaffoldState) {
         viewModel.uiEvent.collect {

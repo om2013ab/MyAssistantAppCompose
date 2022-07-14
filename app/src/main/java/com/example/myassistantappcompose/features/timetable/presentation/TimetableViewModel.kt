@@ -20,7 +20,7 @@ class TimetableViewModel @Inject constructor(
     private val dao: TimetableDao
 ): ViewModel() {
 
-    var dayIndexState by mutableStateOf(0)
+    var timetableState by mutableStateOf(TimetableState())
         private set
 
 
@@ -32,7 +32,14 @@ class TimetableViewModel @Inject constructor(
     val uiEvent = uiEventChannel.receiveAsFlow()
 
     fun onDayIndexChange(dayIndex: Int) {
-        dayIndexState = dayIndex
+        timetableState = timetableState.copy(dayIndex = dayIndex)
+    }
+
+    fun onOptionMenuClicked(
+        expanded: Boolean,
+        timetable: TimetableEntity
+    ) {
+        timetableState = timetableState.copy(optionMenuExpanded = expanded, clickedItem = timetable)
     }
 
     fun onDeleteSchedule(timetableEntity: TimetableEntity) = viewModelScope.launch {
