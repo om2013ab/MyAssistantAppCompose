@@ -1,7 +1,6 @@
 package com.example.myassistantappcompose.features.holidays.presentation
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -43,13 +42,9 @@ fun HolidayScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
-    var selectedMonth by remember {
-        mutableStateOf(0)
-    }
-    val state by viewModel.state.collectAsState()
-    var clickedHoliday by remember {
-        mutableStateOf(state.holidays?.get(0))
-    }
+
+    val state by viewModel.stateFlow.collectAsState()
+
     LaunchedEffect(key1 = scaffoldState) {
         viewModel.uiEvent.collect {
             when (it) {
@@ -78,7 +73,7 @@ fun HolidayScreen(
         if (state.showDialog) {
             InfoAlertDialog(
                 title = R.string.holiday_description,
-                text = clickedHoliday?.description ?: "",
+                text = state.clickedHoliday?.description ?: "",
                 onDismiss = {viewModel.onDismissDialog()}
             )
         }
@@ -86,20 +81,20 @@ fun HolidayScreen(
             item {
                 ChipsSection(
                     months = context.resources.getStringArray(R.array.months).toList(),
-                    selectedMonth = {
-                        selectedMonth = it
-                    }
+                    onSelectedMonthChange = {
+                        viewModel.toggleMonthSelection(it)
+                    },
+                    selectedMonth = state.monthIndex
                 )
             }
             val holidays = state.holidays?.filter {
-                it.isoDate.takeMonth() == selectedMonth + 1
+                it.isoDate.takeMonth() == state.monthIndex + 1
             }
             items(items = holidays ?: emptyList()) { holiday ->
                 HolidayItem(
                     holiday = holiday,
                     onItemClick = {
-                        clickedHoliday = holiday
-                        viewModel.onShowDialog()
+                        viewModel.onHolidayClick(holiday)
                     }
                 )
 
@@ -113,7 +108,8 @@ fun HolidayScreen(
 @Composable
 private fun ChipsSection(
     months: List<String>,
-    selectedMonth: (Int) -> Unit
+    selectedMonth: Int,
+    onSelectedMonthChange: (Int) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -122,9 +118,7 @@ private fun ChipsSection(
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState())
     ) {
-        var selectedState by remember {
-            mutableStateOf(0)
-        }
+
         months.forEachIndexed { index, month ->
             FilterChip(
                 colors = ChipDefaults.filterChipColors(
@@ -134,10 +128,9 @@ private fun ChipsSection(
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(horizontal = 4.dp),
                 onClick = {
-                    selectedState = index
-                    selectedMonth(selectedState)
+                    onSelectedMonthChange(index)
                 },
-                selected = selectedState == index
+                selected = selectedMonth == index
             ) {
                 Text(text = month)
             }
@@ -155,6 +148,7 @@ fun HolidayItem(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
+                .fillMaxWidth()
                 .clickable { onItemClick() }
                 .padding(10.dp)
         ) {

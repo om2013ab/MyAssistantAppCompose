@@ -7,8 +7,9 @@ data class HolidayState(
     val countryName: String? = null,
     val countryIso: String? = null,
     val year: Int? = null,
-    val month: Int? = null,
+    val monthIndex: Int = 0,
     val holidays: List<HolidaysEntity>? = null,
     val isLoading: Boolean = false,
-    val showDialog: Boolean = false
+    val showDialog: Boolean = false,
+    val clickedHoliday: HolidaysEntity? = null
 )
