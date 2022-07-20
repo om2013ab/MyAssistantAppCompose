@@ -40,8 +40,13 @@ fun AddEditLectureScreen(
     hideBottomNav: Boolean = true
 ) {
 
-    val codes = viewModel.courses.collectAsState(emptyList()).value.map {
+    val courses by viewModel.courses.collectAsState(emptyList())
+
+    val codes = courses.map {
         it.courseCode
+    }
+    val colors = courses.map {
+        it.color
     }
     val addEditState = viewModel.addEditState
     val context = LocalContext.current
@@ -67,7 +72,7 @@ fun AddEditLectureScreen(
                 selectedCodeChange = {
                     viewModel.onAddEditEvent(
                         AddEditScheduleEvent.OnCourseCodeChanged(
-                            it
+                            code = it,
                         )
                     )
                 },
@@ -123,7 +128,8 @@ fun AddEditLectureScreen(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    viewModel.onAddEditEvent(AddEditScheduleEvent.OnAddSchedule)
+                    val colorOfSelectedCode = colors[codes.indexOf(addEditState.selectedCode)]
+                    viewModel.onAddEditEvent(AddEditScheduleEvent.OnAddSchedule(colorOfSelectedCode))
                     navigator.popBackStack()
                 },
                 enabled = enableButton

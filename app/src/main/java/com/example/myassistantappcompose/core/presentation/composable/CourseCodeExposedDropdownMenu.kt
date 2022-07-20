@@ -39,7 +39,7 @@ fun CourseCodeExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            if (courseCodes.isNullOrEmpty()){
+            if (courseCodes.isEmpty()){
                 DropdownMenuItem(onClick = {expanded = false }) {
                     Text(text = stringResource(R.string.empty_codes))
                 }

@@ -15,5 +15,6 @@ data class TimetableEntity(
     val timeFrom: Date,
     val timeTo: Date,
     val venue: String,
-    val dayIndex: Int
+    val dayIndex: Int,
+    val color: Int
 ): Parcelable

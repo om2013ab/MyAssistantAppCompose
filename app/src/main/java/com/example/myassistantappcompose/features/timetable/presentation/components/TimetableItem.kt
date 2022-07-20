@@ -23,6 +23,7 @@ import java.util.*
 @ExperimentalMaterialApi
 @Composable
 fun TimetableItem(
+    backgroundColor: Int,
     schedule: TimetableEntity,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
@@ -30,6 +31,7 @@ fun TimetableItem(
 ) {
     val formatter = SimpleDateFormat(TIME_PATTERN, Locale.ROOT)
     Card(
+        backgroundColor = Color(backgroundColor),
         modifier = Modifier
             .padding(bottom = 16.dp)
             .fillMaxSize(),
@@ -45,7 +47,8 @@ fun TimetableItem(
                     modifier = Modifier
                         .align(Alignment.Center),
                     text = "${formatter.format(schedule.timeFrom)}  -  ${formatter.format(schedule.timeTo)}",
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    color = Color.White
                 )
                 IconButton(
                     onClick = { onExpandedChange(true)},
@@ -53,7 +56,8 @@ fun TimetableItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
-                        contentDescription = stringResource(R.string.more_option)
+                        contentDescription = stringResource(R.string.more_option),
+                        tint = Color.White
                     )
                     MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(8.dp))) {
                         DropdownMenu(
@@ -74,7 +78,7 @@ fun TimetableItem(
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Divider(modifier = Modifier.fillMaxWidth())
+            Divider(modifier = Modifier.fillMaxWidth(), color = Color.White)
             Spacer(modifier = Modifier.height(24.dp))
             Row(
                 modifier = Modifier
@@ -91,12 +95,13 @@ fun TimetableItem(
                         imageVector = Icons.Filled.Class,
                         contentDescription = stringResource(R.string.course_code),
                         modifier = Modifier.size(35.dp),
-                        tint = Color.Blue
+                        tint = Color.White
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     Text(
                         text = schedule.selectedCode,
-                        fontSize = 18.sp
+                        fontSize = 18.sp,
+                        color = Color.White
                     )
                 }
                 Column(
@@ -107,11 +112,12 @@ fun TimetableItem(
                         imageVector = Icons.Filled.Home,
                         contentDescription = stringResource(R.string.venue),
                         modifier = Modifier.size(35.dp),
-                        tint = Color.Blue
+                        tint = Color.White
                     )
                     Text(
                         text = schedule.venue.ifBlank { stringResource(R.string.unknown_venue) },
-                        fontSize = 18.sp
+                        fontSize = 18.sp,
+                        color = Color.White
                     )
                 }
             }

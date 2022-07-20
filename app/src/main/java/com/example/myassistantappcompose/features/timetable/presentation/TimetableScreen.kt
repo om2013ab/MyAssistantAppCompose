@@ -86,6 +86,7 @@ fun TimetableScreen(
                         onExpandedChange = {
                              viewModel.onOptionMenuClicked(it,schedule)
                         },
+                        backgroundColor = schedule.color,
                         onOptionClick = { menuIndex ->
                             when (menuIndex) {
                                 0 -> viewModel.onDeleteSchedule(schedule)

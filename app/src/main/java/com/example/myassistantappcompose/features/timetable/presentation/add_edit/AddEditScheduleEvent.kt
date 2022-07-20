@@ -7,5 +7,5 @@ sealed class AddEditScheduleEvent {
     data class OnTimeFromChanged(val from: Date?): AddEditScheduleEvent()
     data class OnTimeToChanged(val to: Date?): AddEditScheduleEvent()
     data class OnVenueChanged(val venue: String): AddEditScheduleEvent()
-    object OnAddSchedule: AddEditScheduleEvent()
+    data class OnAddSchedule(val color: Int): AddEditScheduleEvent()
 }

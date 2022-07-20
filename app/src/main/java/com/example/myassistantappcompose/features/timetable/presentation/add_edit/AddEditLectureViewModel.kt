@@ -51,7 +51,7 @@ class AddEditLectureViewModel @Inject constructor(
         when(scheduleEvent) {
             is AddEditScheduleEvent.OnCourseCodeChanged -> {
                 addEditState = addEditState.copy(
-                    selectedCode = scheduleEvent.code
+                    selectedCode = scheduleEvent.code,
                 )
             }
 
@@ -70,12 +70,13 @@ class AddEditLectureViewModel @Inject constructor(
                     enteredVenue = scheduleEvent.venue
                 )
             }
-            AddEditScheduleEvent.OnAddSchedule -> viewModelScope.launch{
+            is AddEditScheduleEvent.OnAddSchedule -> viewModelScope.launch{
                 val newSchedule = TimetableEntity(
                     selectedCode = addEditState.selectedCode!!,
                     timeFrom = addEditState.selectedTimeFrom!!,
                     timeTo = addEditState.selectedTimeTo!!,
                     venue = addEditState.enteredVenue,
+                    color = scheduleEvent.color,
                     dayIndex = dayIndex?.toInt() ?: addEditState.selectedDay,
                     id = schedule?.id ?: 0
                 )

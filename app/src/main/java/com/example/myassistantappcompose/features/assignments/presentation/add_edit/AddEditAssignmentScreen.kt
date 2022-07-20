@@ -1,5 +1,6 @@
 package com.example.myassistantappcompose.features.assignments.presentation.add_edit
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -22,6 +23,7 @@ import com.example.myassistantappcompose.features.assignments.data.AssignmentEnt
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @ExperimentalMaterialApi
 @Destination
 @Composable
