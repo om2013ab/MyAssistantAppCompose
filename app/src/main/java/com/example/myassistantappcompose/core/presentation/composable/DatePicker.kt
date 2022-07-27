@@ -55,7 +55,7 @@ fun DatePicker(
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             val formattedDate = selectedDate?.let {
-                SimpleDateFormat(Constants.DATE_PATTERN, Locale.ROOT).format(it)
+                SimpleDateFormat(Constants.DATE_PATTERN, Locale.US).format(it)
             }
             Text(text = formattedDate ?: "Click to pick date", modifier = Modifier.align(Alignment.Center))
             if (selectedDate != null) {
